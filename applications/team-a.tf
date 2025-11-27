@@ -1,4 +1,4 @@
-module "anti_fraud" {
+module "project-team-a" {
   source = "./modules/organization"
   
   organization = "team-a-org"
