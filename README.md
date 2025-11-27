@@ -1,6 +1,6 @@
 # harness
 
-📁 Structure
+Structure
 ```
 ├── applications/          # Team/Application-specific project definitions
 │   ├── team-a.tf          # Team A project configuration
@@ -25,7 +25,7 @@
 
 ```
 
-🚀 Usage
+Usage
 
 ```
 module "team_d_project" {
