@@ -13,7 +13,7 @@ variable "organization_unit" {
 variable "account_id" {
   description = "The AWS region to work in"
   type        = string
-  default     = "9leDao-yRqu7DN66CVDAeg"
+  default     = "9leDao-yRqu7DN6...."
 }
 
 variable "projects" {
