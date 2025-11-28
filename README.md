@@ -61,6 +61,7 @@ This will probaly happen to you if using Free license.
 ```
  Invalid request: You've reached the limit of 1 entities under your FREE license. Please contact Harness Support for assistance.
 ```
+**Solution:** Set use_default_org = true in your module configuration to use the default organization and bypass this limitation:
 
 🐳 Locally
 ```
