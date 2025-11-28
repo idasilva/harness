@@ -1,9 +1,9 @@
 module "project" {
   source = "./project"
   
-  for_each = var.projects
+  for_each = toset(var.projects)
 
-  project      = each.value.project_name
+  project      = each.value
   organization_id   = lower(replace(var.organization, "-", ""))
   tags = var.tags
 
