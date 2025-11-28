@@ -31,7 +31,7 @@ This is a basic project to build Harness projects
 
 ```
 module "team_d_project" {
-  source = "../modules/organization/project"
+  source = "../modules/organization"
 
   project         = "Team-D"
   organization_id = var.organization_id

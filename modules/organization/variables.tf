@@ -4,12 +4,6 @@ variable "account_id" {
   sensitive   = true
 }
 
-variable "platform_api_key" {
-  description = "Harness platform API key"
-  type        = string
-  sensitive   = true
-}
-
 variable "organization" {
   description = "Organization name"
   type        = string
