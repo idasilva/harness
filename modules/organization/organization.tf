@@ -1,5 +1,8 @@
 
-# Conditionally create organization (skip on free plan)
+locals {
+  organization_id = var.use_default_org ? "default" : harness_platform_organization.ck_org[0].id
+}
+
 resource "harness_platform_organization" "ck_org" {
   count = var.use_default_org ? 0 : 1
 
@@ -12,6 +15,3 @@ resource "harness_platform_organization" "ck_org" {
   ]
 }
 
-locals {
-  organization_id = var.use_default_org ? "default" : harness_platform_organization.ck_org[0].id
-}
