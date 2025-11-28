@@ -8,12 +8,6 @@ variable "organization_id" {
   type        = string
 }
 
-variable "project_name" {
-  description = "Display name for the project (optional, uses 'project' if not provided)"
-  type        = string
-  default     = ""
-}
-
 variable "color" {
   description = "Project color in Harness UI"
   type        = string
@@ -29,5 +23,4 @@ variable "description" {
 variable "tags" {
   description = "Tags to apply to the project"
   type        = map(string)
-  default     = {}
 }

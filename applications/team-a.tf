@@ -1,9 +1,9 @@
 module "project-team-a" {
-  source = "./modules/organization"
+  source = "../modules/organization"
 
-  organization      = "team-a-org"
-  organization_unit = "team-a-dept"
-  projects          = ["project1", "project2", "project3"]
+  organization      = var.organization
+  organization_unit = var.organization_unit
+  projects          = var.projects
   platform_api_key  = var.platform_api_key
   account_id        = var.account_id
   tags              = module.workspace.default_tags

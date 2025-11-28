@@ -1,8 +1,3 @@
-variable "harness_endpoint" {
-  description = "Harness API endpoint"
-  type        = string
-}
-
 variable "account_id" {
   description = "Harness account ID"
   type        = string
@@ -25,13 +20,12 @@ variable "organization_unit" {
   type        = string
 }
 
-variable "projects1" {
+variable "projects" {
   description = "Projects map"
-  type        = map(any)
+  type        = list(string)
 }
 
-variable "kubernetes_clusters" {
-  description = "Kubernetes clusters"
-  type        = map(any)
-  default     = {}
+variable "tags" {
+  description = "A mapping of tags to assign to the bucket."
+  type        = map(string)
 }
