@@ -1,7 +1,7 @@
 resource "harness_platform_organization" "ck_org" {
-  identifier  = local.org_id
+  identifier  = var.organization
   name        = var.organization
   description = "Organization for ${var.organization_unit}"
   
-  tags = var.tags
+  tags = { for k, v in var.tags : k => join(",", v) }
 }

@@ -1,5 +1,5 @@
-resource "harness_platform_role" "project_admin" {
-  identifier = "${local.org_id}_project_admin"
+resource "harness_platform_roles" "project_admin" {
+  identifier = "project_admin"
   name       = "Project Admin"
   org_id     = harness_platform_organization.ck_org.id
   
@@ -10,8 +10,8 @@ resource "harness_platform_role" "project_admin" {
   ]
 }
 
-resource "harness_platform_role" "project_viewer" {
-  identifier = "${local.org_id}_project_viewer"
+resource "harness_platform_roles" "project_viewer" {
+  identifier = "project_viewer"
   name       = "Project Viewer"
   org_id     = harness_platform_organization.ck_org.id
   

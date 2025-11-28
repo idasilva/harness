@@ -42,3 +42,10 @@ module "team_d_project" {
   }
 }
 ```
+
+Ref
+
+- https://github.com/harness-community/solutions-architecture/blob/main/terraform-harness-modules/structure.tf
+- https://github.com/harness-community/terraform-harness-structure
+- https://www.youtube.com/watch?v=OTeckDYXxS0
+- https://registry.terraform.io/providers/harness/harness/latest/docs

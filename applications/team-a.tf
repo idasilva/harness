@@ -6,7 +6,7 @@ module "project-team-a" {
   projects          = var.projects
   platform_api_key  = var.platform_api_key
   account_id        = var.account_id
-  tags              = module.workspace.default_tags
+  tags              = module.workspace-team-a.default_tags
 }
 
 
