@@ -1,0 +1,37 @@
+pipeline:
+  name: ${PIPELINE_NAME}
+  identifier: ${PIPELINE_IDENTIFIER}
+  projectIdentifier: ${PROJECT_ID_PLACEHOLDER}
+  orgIdentifier: ${ORG_ID_PLACEHOLDER}
+  properties:
+    ci:
+      codebase:
+        connectorRef: github_main
+        repoName: idasilva/luffy-services
+        build: <+input>
+  stages:
+    - stage:
+        name: Build and Push
+        identifier: build_push
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: Build and Push
+                  identifier: build_push
+                  spec:
+                    connectorRef: dockerhub_main
+                    repo: idasilva/luffy-services
+                    tags:
+                      - <+pipeline.sequenceId>
+                      - latest
+                    dockerfile: Dockerfile

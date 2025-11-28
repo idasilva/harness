@@ -1,6 +1,6 @@
 pipeline:
-  name: ${PROJECT_ID_PLACEHOLDER}-pipeline
-  identifier: hello_world
+  name: ${PIPELINE_NAME}
+  identifier: ${PIPELINE_IDENTIFIER}
   projectIdentifier: ${PROJECT_ID_PLACEHOLDER}
   orgIdentifier: ${ORG_ID_PLACEHOLDER}
   tags: {}
@@ -29,3 +29,4 @@ pipeline:
                     command: |
                       echo "Hello from Harness!"
                       echo "Pipeline executed at: $(date)"
+                      echo "Project: ${PROJECT_ID_PLACEHOLDER}"
