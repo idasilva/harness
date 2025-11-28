@@ -1,6 +1,8 @@
 # harness
 
-Structure
+This is a basic project to build Harness projects
+
+📁  Structure
 ```
 ├── applications/          # Team/Application-specific project definitions
 │   ├── team-a.tf          # Team A project configuration
@@ -25,7 +27,7 @@ Structure
 
 ```
 
-Usage
+🚀  Usage
 
 ```
 module "team_d_project" {
@@ -43,7 +45,7 @@ module "team_d_project" {
 }
 ```
 
-Ref
+✅ Ref
 
 - https://github.com/harness-community/solutions-architecture/blob/main/terraform-harness-modules/structure.tf
 - https://github.com/harness-community/terraform-harness-structure
