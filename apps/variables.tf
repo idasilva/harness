@@ -69,11 +69,11 @@ variable "secrets" {
   sensitive = true
   default = {
     github_token = {
-      value                     = "XPTO"
+      value                     = ""
       secret_manager_identifier = "harnessSecretManager"
     }
     dchub_token = {
-      value                     = "XPTO"
+      value                     = ""
       secret_manager_identifier = "harnessSecretManager"
     }
   }
