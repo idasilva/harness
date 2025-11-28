@@ -45,8 +45,21 @@ module "team_d_project" {
 }
 ```
 
+Locally
+```
+docker run -d \
+  -p 3000:3000 \
+  -p 3022:3022 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /tmp/harness:/data \
+  --name harness \
+  --restart always \
+  harness/harness
+```
+
 ✅ Ref
 
+- https://github.com/harness/harness
 - https://github.com/harness-community/solutions-architecture/blob/main/terraform-harness-modules/structure.tf
 - https://github.com/harness-community/terraform-harness-structure
 - https://www.youtube.com/watch?v=OTeckDYXxS0
