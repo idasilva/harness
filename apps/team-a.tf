@@ -11,6 +11,9 @@ module "project-team-a" {
   connectors = var.connectors
   create_connectors_for_projects = var.projects
 
+  enable_gitops  = var.enable_gitops
+  gitops_config  = var.gitops_config
+
   tags = module.workspace-team-a.default_tags
 }
 

@@ -69,3 +69,37 @@ variable "create_connectors_for_projects" {
   type        = set(string)
   default     = []
 }
+
+variable "enable_gitops" {
+  description = "Enable GitOps infrastructure"
+  type        = bool
+  default     = false
+}
+
+variable "gitops_config" {
+  description = "GitOps infrastructure configuration"
+  type = object({
+    agent_namespace   = string
+    high_availability = bool
+    cluster_server    = string
+    cluster_name      = string
+  })
+  default = {
+    agent_namespace   = "harness-gitops"
+    high_availability = false
+    cluster_server    = "https://kubernetes.default.svc"
+    cluster_name      = "in-cluster"
+  }
+}
+
+variable "github_repo" {
+  description = "GitHub repository"
+  type        = string
+  default     = ""
+}
+
+variable "dockerhub_repo" {
+  description = "DockerHub repository"
+  type        = string
+  default     = ""
+}

@@ -7,7 +7,6 @@ pipeline:
     ci:
       codebase:
         connectorRef: github_main
-        repoName: idasilva/luffy-services
         build: <+input>
   stages:
     - stage:
@@ -25,13 +24,11 @@ pipeline:
           execution:
             steps:
               - step:
-                  type: BuildAndPushDockerRegistry
-                  name: Build and Push
-                  identifier: build_push
-                  spec:
-                    connectorRef: dockerhub_main
-                    repo: idasilva/luffy-services
-                    tags:
-                      - <+pipeline.sequenceId>
-                      - latest
-                    dockerfile: Dockerfile
+                    type: BuildAndPushDockerRegistry
+                    name: BuildAndPushDockerRegistry_1
+                    identifier: BuildAndPushDockerRegistry_1
+                    spec:
+                      connectorRef: dockerhub_main
+                      repo: idasilva6/luffy
+                      tags:
+                        - v1.0.3

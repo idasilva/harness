@@ -18,7 +18,7 @@ variable "account_id" {
 
 variable "projects" {
   description = "List of projects"
-  default     = ["project1", "project2", "project3"]
+  default     = ["project1"]
   type        = list(string)
 }
 
@@ -31,7 +31,7 @@ variable "use_default_org" {
 variable "create_connectors_for_projects" {
   description = "List of projects to create connectors for"
   type        = set(string)
-  default     = ["project1", "project2"]
+  default     = ["project1"]
 }
 
 variable "github_username" {
@@ -69,11 +69,11 @@ variable "secrets" {
   sensitive = true
   default = {
     github_token = {
-      value                     = ""
+      value                     = "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"
       secret_manager_identifier = "harnessSecretManager"
     }
     dchub_token = {
-      value                     = ""
+      value                     = "dckr_pat_dT8QwNuCkK2k2jseIHO4QA2P1eY"
       secret_manager_identifier = "harnessSecretManager"
     }
   }
@@ -125,5 +125,27 @@ variable "connectors" {
         password_ref = "dchub_token"
       }
     }
+  }
+}
+
+variable "enable_gitops" {
+  description = "Enable GitOps infrastructure (agent, cluster, repository)"
+  type        = bool
+  default     = true
+}
+
+variable "gitops_config" {
+  description = "GitOps infrastructure configuration"
+  type = object({
+    agent_namespace   = optional(string, "harness-gitops")
+    high_availability = optional(bool, false)
+    cluster_server    = optional(string, "https://kubernetes.default.svc")
+    cluster_name      = optional(string, "in-cluster")
+  })
+  default = {
+    agent_namespace   = "harness-gitops"
+    high_availability = false
+    cluster_server    = "https://kubernetes.default.svc"
+    cluster_name      = "in-cluster"
   }
 }

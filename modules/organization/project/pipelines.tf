@@ -10,6 +10,7 @@ resource "harness_platform_pipeline" "hello_world" {
     PIPELINE_NAME          = "Hello World Pipeline",
     PIPELINE_IDENTIFIER    = "hello_world"
   })
+    depends_on = [ harness_platform_project.ck_project ]
 }
 
 
@@ -25,4 +26,5 @@ resource "harness_platform_pipeline" "ci_pipeline" {
     PIPELINE_NAME          = "CI Pipeline - Build and Push"
     PIPELINE_IDENTIFIER    = "ci_build_push"
   })
+  depends_on = [ harness_platform_project.ck_project ]
 }
