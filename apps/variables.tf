@@ -69,11 +69,11 @@ variable "secrets" {
   sensitive = true
   default = {
     github_token = {
-      value                     = "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"
+      value                     = ""
       secret_manager_identifier = "harnessSecretManager"
     }
     dchub_token = {
-      value                     = "dckr_pat_dT8QwNuCkK2k2jseIHO4QA2P1eY"
+      value                     = ""
       secret_manager_identifier = "harnessSecretManager"
     }
   }
