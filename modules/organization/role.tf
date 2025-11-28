@@ -1,4 +1,5 @@
 resource "harness_platform_roles" "project_admin" {
+  count = var.use_default_org ? 0 : 1
   identifier = "project_admin"
   name       = "Project Admin"
   org_id     = local.organization_id
@@ -11,6 +12,7 @@ resource "harness_platform_roles" "project_admin" {
 }
 
 resource "harness_platform_roles" "project_viewer" {
+  count = var.use_default_org ? 0 : 1
   identifier = "project_viewer"
   name       = "Project Viewer"
   org_id     = local.organization_id
