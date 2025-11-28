@@ -4,7 +4,6 @@ module "project-team-a" {
   organization      = var.organization
   organization_unit = var.organization_unit
   projects          = var.projects
-  platform_api_key  = var.platform_api_key
   account_id        = var.account_id
   tags              = module.workspace-team-a.default_tags
 }
