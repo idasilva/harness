@@ -45,7 +45,13 @@ module "team_d_project" {
 }
 ```
 
-Locally
+⚠️ Warning
+This will probaly happen to you if using Free license.
+```
+ Invalid request: You've reached the limit of 1 entities under your FREE license. Please contact Harness Support for assistance.
+```
+
+🐳 Locally
 ```
 docker run -d \
   -p 3000:3000 \
@@ -57,7 +63,7 @@ docker run -d \
   harness/harness
 ```
 
-✅ Ref
+📚 References
 
 - https://github.com/harness/harness
 - https://github.com/harness-community/solutions-architecture/blob/main/terraform-harness-modules/structure.tf
