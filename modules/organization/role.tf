@@ -1,7 +1,7 @@
 resource "harness_platform_roles" "project_admin" {
   identifier = "project_admin"
   name       = "Project Admin"
-  org_id     = harness_platform_organization.ck_org.id
+  org_id     = local.organization_id
   
   permissions = [
     "core_project_edit",
@@ -13,7 +13,7 @@ resource "harness_platform_roles" "project_admin" {
 resource "harness_platform_roles" "project_viewer" {
   identifier = "project_viewer"
   name       = "Project Viewer"
-  org_id     = harness_platform_organization.ck_org.id
+  org_id     = local.organization_id
   
   permissions = [
     "core_project_view"

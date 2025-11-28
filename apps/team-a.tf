@@ -5,6 +5,7 @@ module "project-team-a" {
   organization_unit = var.organization_unit
   projects          = var.projects
   account_id        = var.account_id
+  use_default_org   = var.use_default_org
   tags              = module.workspace-team-a.default_tags
 }
 

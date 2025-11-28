@@ -7,6 +7,7 @@ variable "account_id" {
 variable "organization" {
   description = "Organization name"
   type        = string
+  default = "default"
 }
 
 variable "organization_unit" {
@@ -22,4 +23,10 @@ variable "projects" {
 variable "tags" {
   description = "A mapping of tags to assign to the bucket."
   type        = map(string)
+}
+
+variable "use_default_org" {
+  description = "Use default organization (for free plan)"
+  type        = bool
+  default     = false
 }
