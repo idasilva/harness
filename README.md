@@ -2,6 +2,8 @@
 
 This is a basic project to build Harness projects
 
+---
+
 📁  Structure
 ```
 ├── applications/          # Team/Application-specific project definitions
@@ -44,6 +46,15 @@ module "team_d_project" {
   }
 }
 ```
+
+🏗️ Harness Hierarchy
+
+Access is managed at the following scopes:
+
+- **Account**: Can create multiple organizations
+  - **Organization**: Groups projects with shared goals (business unit level)
+    - Resources at this level are available to all projects within the org
+  - **Project**: Team-managed, groups Harness modules
 
 ⚠️ Warning
 This will probaly happen to you if using Free license.
