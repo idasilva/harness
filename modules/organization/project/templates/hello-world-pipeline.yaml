@@ -1,5 +1,5 @@
 pipeline:
-  name: Hello World Pipeline
+  name: ${PROJECT_ID_PLACEHOLDER}-pipeline
   identifier: hello_world
   projectIdentifier: ${PROJECT_ID_PLACEHOLDER}
   orgIdentifier: ${ORG_ID_PLACEHOLDER}
