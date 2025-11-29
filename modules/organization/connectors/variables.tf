@@ -11,7 +11,7 @@ variable "project_id" {
 variable "connectors" {
   description = "Map of connectors to create"
   type = map(object({
-    type        = string # github, dockerhub, aws, gcp, kubernetes
+    type        = string
     enabled     = bool
     name        = string
     identifier  = string

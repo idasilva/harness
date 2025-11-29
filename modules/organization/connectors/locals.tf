@@ -1,5 +1,4 @@
 locals {
-  # Filter connectors by type and enabled status
   github_connectors = {
     for k, v in var.connectors : k => v
     if v.type == "github" && v.enabled
@@ -25,7 +24,6 @@ locals {
     if v.type == "kubernetes" && v.enabled
   }
 
-  # Merge default tags with connector-specific tags
   merged_tags = {
     for k, v in var.connectors : k => merge(var.default_tags, v.tags != null ? v.tags : {})
   }
