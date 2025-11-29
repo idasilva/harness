@@ -84,3 +84,4 @@ docker run -d \
 - https://www.youtube.com/watch?v=OTeckDYXxS0
 - https://github.com/harness-community/harnesscd-example-apps/blob/master/sync-waves/manifests.yaml
 - https://registry.terraform.io/providers/harness/harness/latest/docs
+- https://developer.harness.io/docs/continuous-delivery/gitops/get-started/harness-cd-git-ops-quickstart
