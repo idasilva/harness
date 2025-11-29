@@ -15,6 +15,54 @@ resource "harness_platform_gitops_agent" "agent" {
   depends_on = [harness_platform_project.ck_project]
 }
 
+
+resource "kubectl_manifest" "gitops_namespace" {
+  count = var.enable_gitops ? 1 : 0
+
+  yaml_body = <<-YAML
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: ${var.gitops_config.agent_namespace}
+  YAML
+
+  server_side_apply = true
+  force_conflicts   = true
+}
+
+resource "null_resource" "deploy_operator_to_cluster" {
+  count = var.enable_gitops ? 1 : 0
+
+  triggers = {
+    content = local_file.gitops_operator_yaml_file[0].content
+  }
+
+  provisioner "local-exec" {
+    when    = create
+    command = "kubectl apply -f ${local_file.gitops_operator_yaml_file[0].filename}; sleep 30"
+  }
+
+  depends_on = [local_file.gitops_operator_yaml_file]
+}
+
+resource "null_resource" "deploy_agent_to_cluster" {
+  count = var.enable_gitops ? 1 : 0
+
+  triggers = {
+    content = local_file.gitops_agent_yaml_file[0].content
+  }
+
+  provisioner "local-exec" {
+    when    = create
+    command = "kubectl apply -f ${local_file.gitops_agent_yaml_file[0].filename}; sleep 60"
+  }
+
+  depends_on = [
+    local_file.gitops_agent_yaml_file,
+    null_resource.deploy_operator_to_cluster
+  ]
+}
+
 resource "harness_platform_gitops_repository" "repo" {
   count = var.enable_gitops && var.github_repo != "" ? 1 : 0
 
@@ -57,5 +105,5 @@ resource "harness_platform_gitops_cluster" "cluster" {
     }
   }
 
-  depends_on = [harness_platform_gitops_agent.agent]
+  depends_on = [harness_platform_gitops_agent.agent, kubectl_manifest.gitops_namespace, null_resource.deploy_agent_to_cluster, null_resource.deploy_operator_to_cluster]
 }
