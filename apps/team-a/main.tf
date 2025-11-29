@@ -1,5 +1,5 @@
 module "project-team-a" {
-  source = "../modules/organization"
+  source = "../../modules/organization"
 
   organization      = var.organization
   organization_unit = var.organization_unit
@@ -18,6 +18,6 @@ module "project-team-a" {
 }
 
 module "workspace-team-a" {
-  source = "../modules/workspace"
+  source = "../../modules/workspace"
   name   = terraform.workspace
 }
