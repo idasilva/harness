@@ -78,6 +78,7 @@ docker run -d \
 📚 References
 
 - https://github.com/harness/harness
+- https://github.com/harness-community/gitops-terraform-onboarding/blob/main/variables.tf
 - https://github.com/harness-community/solutions-architecture/blob/main/terraform-harness-modules/structure.tf
 - https://github.com/harness-community/terraform-harness-structure
 - https://www.youtube.com/watch?v=OTeckDYXxS0
