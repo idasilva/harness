@@ -40,6 +40,12 @@ variable "github_username" {
   default     = "team-a-bot"
 }
 
+variable "github_repo" {
+  description = "GitHub repository"
+  type        = string
+  default     = "idasilva/k8s"
+}
+
 variable "github_token" {
   description = "GitHub personal access token"
   type        = string

@@ -6,7 +6,8 @@ resource "harness_platform_gitops_agent" "agent" {
   org_id     = var.organization_id
   name       = "${var.project}-gitops-agent"
   type       = "MANAGED_ARGO_PROVIDER"
-  
+  operator   = "ARGO"
+
   metadata {
     namespace         = var.gitops_config.agent_namespace
     high_availability = var.gitops_config.high_availability
@@ -33,13 +34,16 @@ resource "kubectl_manifest" "gitops_namespace" {
 resource "null_resource" "deploy_operator_to_cluster" {
   count = var.enable_gitops ? 1 : 0
 
-  triggers = {
-    content = local_file.gitops_operator_yaml_file[0].content
-  }
+  # triggers = {
+  #   content      = local_file.gitops_operator_yaml_file[0].content
+  #   # file_id      = local_file.gitops_operator_yaml_file[0].id
+  #   # manifest_md5 = md5(data.harness_platform_gitops_agent_operator_yaml.gitops_operator_yaml[0].yaml)
+  #   # agent_identifier = harness_platform_gitops_agent.agent[0].identifier
+  # }
 
   provisioner "local-exec" {
     when    = create
-    command = "kubectl apply -f ${local_file.gitops_operator_yaml_file[0].filename}; sleep 30"
+    command = "kubectl apply -f ${local_file.gitops_operator_yaml_file[0].filename}; sleep 120"
   }
 
   depends_on = [local_file.gitops_operator_yaml_file]
@@ -48,13 +52,17 @@ resource "null_resource" "deploy_operator_to_cluster" {
 resource "null_resource" "deploy_agent_to_cluster" {
   count = var.enable_gitops ? 1 : 0
 
-  triggers = {
-    content = local_file.gitops_agent_yaml_file[0].content
-  }
+  # triggers = {
+  #   content      = local_file.gitops_agent_yaml_file[0].content
+  #   # file_id      = local_file.gitops_agent_yaml_file[0].id
+  #   # manifest_md5 = md5(data.harness_platform_gitops_agent_deploy_yaml.gitops_agent_yaml[0].yaml)
+  #   # operator_id  = null_resource.deploy_operator_to_cluster[0].id
+  #   # agent_identifier = harness_platform_gitops_agent.agent[0].identifier
+  # }
 
   provisioner "local-exec" {
     when    = create
-    command = "kubectl apply -f ${local_file.gitops_agent_yaml_file[0].filename}; sleep 60"
+    command = "kubectl apply -f ${local_file.gitops_agent_yaml_file[0].filename}; sleep 120"
   }
 
   depends_on = [
@@ -70,7 +78,7 @@ resource "harness_platform_gitops_repository" "repo" {
   project_id = var.project
   org_id     = var.organization_id
   agent_id   = harness_platform_gitops_agent.agent[0].id
-  
+
   repo {
     repo            = "https://github.com/${var.github_repo}"
     name            = "${var.project}-repo"
