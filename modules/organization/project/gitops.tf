@@ -34,12 +34,12 @@ resource "kubectl_manifest" "gitops_namespace" {
 resource "null_resource" "deploy_operator_to_cluster" {
   count = var.enable_gitops ? 1 : 0
 
-  # triggers = {
-  #   content      = local_file.gitops_operator_yaml_file[0].content
-  #   # file_id      = local_file.gitops_operator_yaml_file[0].id
-  #   # manifest_md5 = md5(data.harness_platform_gitops_agent_operator_yaml.gitops_operator_yaml[0].yaml)
-  #   # agent_identifier = harness_platform_gitops_agent.agent[0].identifier
-  # }
+  triggers = {
+    content      = local_file.gitops_operator_yaml_file[0].content
+    # file_id      = local_file.gitops_operator_yaml_file[0].id
+    # manifest_md5 = md5(data.harness_platform_gitops_agent_operator_yaml.gitops_operator_yaml[0].yaml)
+    # agent_identifier = harness_platform_gitops_agent.agent[0].identifier
+  }
 
   provisioner "local-exec" {
     when    = create
@@ -52,13 +52,13 @@ resource "null_resource" "deploy_operator_to_cluster" {
 resource "null_resource" "deploy_agent_to_cluster" {
   count = var.enable_gitops ? 1 : 0
 
-  # triggers = {
-  #   content      = local_file.gitops_agent_yaml_file[0].content
-  #   # file_id      = local_file.gitops_agent_yaml_file[0].id
-  #   # manifest_md5 = md5(data.harness_platform_gitops_agent_deploy_yaml.gitops_agent_yaml[0].yaml)
-  #   # operator_id  = null_resource.deploy_operator_to_cluster[0].id
-  #   # agent_identifier = harness_platform_gitops_agent.agent[0].identifier
-  # }
+  triggers = {
+    content      = local_file.gitops_agent_yaml_file[0].content
+    # file_id      = local_file.gitops_agent_yaml_file[0].id
+    # manifest_md5 = md5(data.harness_platform_gitops_agent_deploy_yaml.gitops_agent_yaml[0].yaml)
+    # operator_id  = null_resource.deploy_operator_to_cluster[0].id
+    # agent_identifier = harness_platform_gitops_agent.agent[0].identifier
+  }
 
   provisioner "local-exec" {
     when    = create
@@ -77,7 +77,7 @@ resource "harness_platform_gitops_repository" "repo" {
   identifier = "${var.project}_gitops_repo"
   project_id = var.project
   org_id     = var.organization_id
-  agent_id   = harness_platform_gitops_agent.agent[0].id
+  agent_id   = "project1_gitops_agent"
 
   repo {
     repo            = "https://github.com/${var.github_repo}"
