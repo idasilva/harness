@@ -137,7 +137,7 @@ variable "connectors" {
 variable "enable_gitops" {
   description = "Enable GitOps infrastructure (agent, cluster, repository)"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "gitops_config" {
