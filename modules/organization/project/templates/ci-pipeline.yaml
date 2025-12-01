@@ -10,7 +10,7 @@ pipeline:
         build: <+input>
   stages:
     - stage:
-        name: Build and Push
+        name: Continuous Integration
         identifier: build_push
         type: CI
         spec:
@@ -24,6 +24,32 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: Run
+                  identifier: installgo
+                  name: Install Go
+                  spec:
+                    shell: Sh
+                    command: |-
+                      export PATH=$(go env GOPATH)/bin:$PATH
+                      go install golang.org/dl/go1.23@latest
+                      go1.23 download
+              - step:
+                  type: Run
+                  identifier: test
+                  name: Test
+                  spec:
+                    shell: Sh
+                    command: |-
+                      export PATH=$(go env GOPATH)/bin:$PATH
+                      go1.20 install github.com/jstemmer/go-junit-report/v2@latest
+                      go1.20 test -v | tee report.out
+                      cat report.out | go-junit-report -set-exit-code > report.xml
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - report.xml
+              - step:
                     type: BuildAndPushDockerRegistry
                     name: BuildAndPushDockerRegistry_1
                     identifier: BuildAndPushDockerRegistry_1
@@ -31,4 +57,22 @@ pipeline:
                       connectorRef: dockerhub_main
                       repo: idasilva6/luffy
                       tags:
-                        - v1.0.3
+                        - v1.0.4
+              - step:
+                  type: AquaTrivy
+                  name: AquaTrivy_1
+                  identifier: AquaTrivy_1
+                  spec:
+                    mode: orchestration
+                    config: default
+                    target:
+                      type: container
+                      detection: auto
+                    advanced:
+                      log:
+                        level: info
+                    privileged: true
+                    image:
+                      type: docker_v2
+                      tag: v1.0.4
+                      name: idasilva6/luffy
