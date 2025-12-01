@@ -8,6 +8,7 @@ pipeline:
       codebase:
         connectorRef: github_main
         build: <+input>
+        branch: main
   stages:
     - stage:
         name: Continuous Integration
@@ -28,22 +29,53 @@ pipeline:
                   identifier: installgo
                   name: Install Go
                   spec:
+                    connectorRef: dockerhub_main
+                    image: golang:1.23-alpine
                     shell: Sh
                     command: |-
-                      export PATH=$(go env GOPATH)/bin:$PATH
-                      go install golang.org/dl/go1.23@latest
-                      go1.23 download
+                      set -e
+                      echo "Go is already installed in this image"
+                      go version
+                      
+                      echo "Setting up Go environment..."
+                      export GOPATH=/root/go
+                      export PATH=$GOPATH/bin:$PATH
+                      
+                      echo "Installing go-junit-report..."
+                      go install github.com/jstemmer/go-junit-report/v2@latest
+                      
+                      echo "✅ Go setup complete"
+                      
               - step:
                   type: Run
                   identifier: test
                   name: Test
                   spec:
+                    connectorRef: dockerhub_main
+                    image: golang:1.23-alpine
                     shell: Sh
                     command: |-
-                      export PATH=$(go env GOPATH)/bin:$PATH
-                      go1.20 install github.com/jstemmer/go-junit-report/v2@latest
-                      go1.20 test -v | tee report.out
+                      set -e
+                      
+                      export GOPATH=/root/go
+                      export PATH=$GOPATH/bin:$PATH
+                      
+                      echo "Go version:"
+                      go version
+                      
+                      echo "Installing dependencies..."
+                      go mod download
+                      
+                      echo "Installing go-junit-report..."
+                      go install github.com/jstemmer/go-junit-report/v2@latest
+                      
+                      echo "Running tests..."
+                      go test -v ./... 2>&1 | tee report.out
+                      
+                      echo "Generating JUnit report..."
                       cat report.out | go-junit-report -set-exit-code > report.xml
+                      
+                      echo "✅ Tests completed"
                     reports:
                       type: JUnit
                       spec:
