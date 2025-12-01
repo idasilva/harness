@@ -34,17 +34,10 @@ pipeline:
                     shell: Sh
                     command: |-
                       set -e
-                      echo "Go is already installed in this image"
                       go version
-
-                      echo "Setting up Go environment..."
                       export GOPATH=/root/go
                       export PATH=$GOPATH/bin:$PATH
-
-                      echo "Installing go-junit-report..."
                       go install github.com/jstemmer/go-junit-report/v2@latest
-
-                      echo "✅ Go setup complete"
               - step:
                   type: Run
                   identifier: test
@@ -55,26 +48,13 @@ pipeline:
                     shell: Sh
                     command: |-
                       set -e
-
                       export GOPATH=/root/go
                       export PATH=$GOPATH/bin:$PATH
-
-                      echo "Go version:"
                       go version
-
-                      echo "Installing dependencies..."
                       go mod download
-
-                      echo "Installing go-junit-report..."
                       go install github.com/jstemmer/go-junit-report/v2@latest
-
-                      echo "Running tests..."
                       go test -v ./... 2>&1 | tee report.out
-
-                      echo "Generating JUnit report..."
                       cat report.out | go-junit-report -set-exit-code > report.xml
-
-                      echo "✅ Tests completed"
                     reports:
                       type: JUnit
                       spec:
