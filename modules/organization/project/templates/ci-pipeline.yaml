@@ -36,16 +36,15 @@ pipeline:
                       set -e
                       echo "Go is already installed in this image"
                       go version
-                      
+
                       echo "Setting up Go environment..."
                       export GOPATH=/root/go
                       export PATH=$GOPATH/bin:$PATH
-                      
+
                       echo "Installing go-junit-report..."
                       go install github.com/jstemmer/go-junit-report/v2@latest
-                      
+
                       echo "✅ Go setup complete"
-                      
               - step:
                   type: Run
                   identifier: test
@@ -56,25 +55,25 @@ pipeline:
                     shell: Sh
                     command: |-
                       set -e
-                      
+
                       export GOPATH=/root/go
                       export PATH=$GOPATH/bin:$PATH
-                      
+
                       echo "Go version:"
                       go version
-                      
+
                       echo "Installing dependencies..."
                       go mod download
-                      
+
                       echo "Installing go-junit-report..."
                       go install github.com/jstemmer/go-junit-report/v2@latest
-                      
+
                       echo "Running tests..."
                       go test -v ./... 2>&1 | tee report.out
-                      
+
                       echo "Generating JUnit report..."
                       cat report.out | go-junit-report -set-exit-code > report.xml
-                      
+
                       echo "✅ Tests completed"
                     reports:
                       type: JUnit
@@ -82,14 +81,14 @@ pipeline:
                         paths:
                           - report.xml
               - step:
-                    type: BuildAndPushDockerRegistry
-                    name: BuildAndPushDockerRegistry_1
-                    identifier: BuildAndPushDockerRegistry_1
-                    spec:
-                      connectorRef: dockerhub_main
-                      repo: idasilva6/luffy
-                      tags:
-                        - v1.0.4
+                  type: BuildAndPushDockerRegistry
+                  name: BuildAndPushDockerRegistry_1
+                  identifier: BuildAndPushDockerRegistry_1
+                  spec:
+                    connectorRef: dockerhub_main
+                    repo: idasilva6/luffy
+                    tags:
+                      - v1.0.4
               - step:
                   type: AquaTrivy
                   name: AquaTrivy_1
@@ -108,3 +107,44 @@ pipeline:
                       type: docker_v2
                       tag: v1.0.4
                       name: idasilva6/luffy
+    - stage:
+        name: approval
+        identifier: approval
+        description: ""
+        type: Approval
+        spec:
+          execution:
+            steps:
+              - step:
+                  name: approval
+                  identifier: approval
+                  type: HarnessApproval
+                  timeout: 1d
+                  spec:
+                    approvalMessage: |-
+                      Please review the following information
+                      and approve the pipeline progression
+                    includePipelineExecutionHistory: true
+                    approvers:
+                      minimumCount: 1
+                      disallowPipelineExecutor: false
+                      userGroups:
+                        - account._account_all_users
+                    isAutoRejectEnabled: false
+                    approverInputs: []
+        tags: {}
+    - stage:
+        name: Continuous Delivery
+        identifier: Continuous_Delivery
+        description: ""
+        type: Custom
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: Wait
+                  name: Deployment
+                  identifier: Deployment
+                  spec:
+                    duration: 1m
+        tags: {}
