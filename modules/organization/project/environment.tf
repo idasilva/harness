@@ -1,4 +1,4 @@
-resource "harness_platform_environment" "example" {
+resource "harness_platform_environment" "enviroment" {
   for_each   = local.environments
   identifier = each.key
   name       = each.value.name
