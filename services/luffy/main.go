@@ -8,7 +8,5 @@ import (
 func main() {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
-	
-	logger.Info("Starting luffy-services application...")
 	cmd.Execute()
 }
