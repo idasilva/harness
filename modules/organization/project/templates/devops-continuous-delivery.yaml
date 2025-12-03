@@ -8,7 +8,9 @@ pipeline:
       codebase:
         connectorRef: github_main
         build: <+input>
+        repoName: <+input>  
         branch: main
+        path: services/luffy
   stages:
     - stage:
         name: Continuous Integration
@@ -32,6 +34,7 @@ pipeline:
                     connectorRef: dockerhub_main
                     image: golang:1.23-alpine
                     shell: Sh
+                    workingDirectory: /harness/services/luffy
                     command: |-
                       set -e
                       go version
@@ -46,6 +49,7 @@ pipeline:
                     connectorRef: dockerhub_main
                     image: golang:1.23-alpine
                     shell: Sh
+                    workingDirectory: /harness/services/luffy
                     command: |-
                       set -e
                       export GOPATH=/root/go
@@ -59,7 +63,7 @@ pipeline:
                       type: JUnit
                       spec:
                         paths:
-                          - report.xml
+                          - /harness/services/luffy/report.xml
               - step:
                   type: BuildAndPushDockerRegistry
                   name: BuildAndPushDockerRegistry_1
@@ -69,6 +73,8 @@ pipeline:
                     repo: idasilva6/luffy
                     tags:
                       - v1.0.4
+                    dockerfile: services/luffy/Dockerfile
+                    context: services/luffy
               - step:
                   type: AquaTrivy
                   name: AquaTrivy_1
