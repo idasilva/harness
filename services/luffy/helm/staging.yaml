@@ -1,0 +1,5 @@
+fullnameOverride: luffy-services
+replicaCount: 2
+image:
+  repository: 560978416398.dkr.ecr.us-east-1.amazonaws.com/luffy-services
+  tag: v0.0.1-rc.1

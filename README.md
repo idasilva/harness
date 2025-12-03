@@ -80,6 +80,7 @@ docker run -d \
 - https://github.com/harness/harness
 - https://github.com/harness-community/gitops-terraform-onboarding/blob/main/variables.tf
 - https://github.com/harness-community/solutions-architecture/blob/main/terraform-harness-modules/structure.tf
+- https://blog.techiescamp.com/using-ngrok-with-kubernetes/
 - https://github.com/harness-community/terraform-harness-structure
 - https://www.youtube.com/watch?v=OTeckDYXxS0
 - https://github.com/harness-community/harnesscd-example-apps/blob/master/sync-waves/manifests.yaml
