@@ -13,43 +13,84 @@ pipeline:
         path: services/luffy
   stages:
     - stage:
-        name: approval
-        identifier: approval
-        description: ""
-        type: Approval
+        name: Continuous Integration
+        identifier: build_push
+        type: CI
         spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
           execution:
             steps:
               - step:
-                  name: approval
-                  identifier: approval
-                  type: HarnessApproval
-                  timeout: 1d
+                  type: Run
+                  identifier: installgo
+                  name: Install Go
                   spec:
-                    approvalMessage: |-
-                      Please review the following information
-                      and approve the pipeline progression
-                    includePipelineExecutionHistory: true
-                    approvers:
-                      minimumCount: 1
-                      disallowPipelineExecutor: false
-                      userGroups:
-                        - account._account_all_users
-                    isAutoRejectEnabled: false
-                    approverInputs: []
-        tags: {}
-    - stage:
-        name: Continuous Delivery
-        identifier: Continuous_Delivery
-        description: ""
-        type: Custom
-        spec:
-          execution:
-            steps:
+                    connectorRef: dockerhub_main
+                    image: golang:1.23-alpine
+                    shell: Sh
+                    workingDirectory: /harness/services/luffy
+                    command: |-
+                      set -e
+                      go version
+                      export GOPATH=/root/go
+                      export PATH=$GOPATH/bin:$PATH
+                      go install github.com/jstemmer/go-junit-report/v2@latest
               - step:
-                  type: Wait
-                  name: Deployment
-                  identifier: Deployment
+                  type: Run
+                  identifier: test
+                  name: Test
                   spec:
-                    duration: 1m
-        tags: {}
+                    connectorRef: dockerhub_main
+                    image: golang:1.23-alpine
+                    shell: Sh
+                    workingDirectory: /harness/services/luffy
+                    command: |-
+                      set -e
+                      cd  /harness/services/luffy
+                      export GOPATH=/root/go
+                      export PATH=$GOPATH/bin:$PATH
+                      go version
+                      go mod download
+                      go install github.com/jstemmer/go-junit-report/v2@latest
+                      go test -v ./... 2>&1 | tee report.out
+                      cat report.out | go-junit-report -set-exit-code > report.xml
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - /harness/services/luffy/report.xml
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: BuildAndPushDockerRegistry_1
+                  identifier: BuildAndPushDockerRegistry_1
+                  spec:
+                    connectorRef: dockerhub_main
+                    repo: idasilva6/luffy
+                    tags:
+                      - v1.0.4
+                    dockerfile: services/luffy/Dockerfile
+                    context: services/luffy
+              - step:
+                  type: AquaTrivy
+                  name: AquaTrivy_1
+                  identifier: AquaTrivy_1
+                  spec:
+                    mode: orchestration
+                    config: default
+                    target:
+                      type: container
+                      detection: auto
+                    advanced:
+                      log:
+                        level: info
+                    privileged: true
+                    image:
+                      type: docker_v2
+                      tag: v1.0.4
+                      name: idasilva6/luffy
