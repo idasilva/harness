@@ -8,7 +8,7 @@ resource "harness_platform_connector_github" "this" {
   project_id  = var.project_id
   url         = coalesce(each.value.url, "https://github.com")
 
-  validation_repo = try(each.value.validation_repo, null)
+  validation_repo = try(each.value.validation_repo, "k8s")
 
   connection_type = try(each.value.connection_type, "Repo")
 
@@ -20,9 +20,9 @@ resource "harness_platform_connector_github" "this" {
   }
 
   dynamic "api_authentication" {
-    for_each = try(each.value.api_authentication, null) != null ? [1] : []
+    for_each = lookup(each.value, "api_authentication", null) != null ? [each.value.api_authentication] : []
     content {
-      token_ref = each.value.api_authentication.token_ref
+      token_ref = api_authentication.value.token_ref
     }
   }
   execute_on_delegate = false

@@ -25,6 +25,11 @@ variable "connectors" {
       access_key   = optional(string)
       secret_key_ref = optional(string)
     }))
+    api_authentication = optional(object({
+    token_ref = string
+    }))
+    validation_repo    = optional(string)
+    connection_type    = optional(string)
     delegate_selectors = optional(list(string))
     tags              = optional(map(string))
   }))

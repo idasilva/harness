@@ -75,6 +75,28 @@ docker run -d \
   harness/harness
 ```
 
+📦🚢 Pipeline strategy
+
+```
+PR Opened → PR Pipeline (CI)
+├── Clone code
+├── SAST scan (SonarQube)
+├── Run tests
+├── Build image
+├── Container scan (Trivy)
+└── Comment results on PR
+
+PR Merged → Deploy Pipeline (CD)
+├── Pull latest image
+├── Deploy to dev
+├── DAST scan (OWASP ZAP)
+├── Approval
+├── Deploy to staging
+├── Integration tests
+├── Approval
+└── Deploy to production
+```
+
 📚 References
 
 - https://github.com/harness/harness

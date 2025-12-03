@@ -8,7 +8,9 @@ pipeline:
       codebase:
         connectorRef: github_main
         build: <+input>
+        repoName: <+input>  
         branch: main
+        path: services/luffy
   stages:
     - stage:
         name: Continuous Integration
@@ -32,6 +34,7 @@ pipeline:
                     connectorRef: dockerhub_main
                     image: golang:1.23-alpine
                     shell: Sh
+                    workingDirectory: /harness/services/luffy
                     command: |-
                       set -e
                       go version
@@ -46,8 +49,10 @@ pipeline:
                     connectorRef: dockerhub_main
                     image: golang:1.23-alpine
                     shell: Sh
+                    workingDirectory: /harness/services/luffy
                     command: |-
                       set -e
+                      cd  /harness/services/luffy
                       export GOPATH=/root/go
                       export PATH=$GOPATH/bin:$PATH
                       go version
@@ -59,7 +64,7 @@ pipeline:
                       type: JUnit
                       spec:
                         paths:
-                          - report.xml
+                          - /harness/services/luffy/report.xml
               - step:
                   type: BuildAndPushDockerRegistry
                   name: BuildAndPushDockerRegistry_1
@@ -69,6 +74,8 @@ pipeline:
                     repo: idasilva6/luffy
                     tags:
                       - v1.0.4
+                    dockerfile: services/luffy/Dockerfile
+                    context: services/luffy
               - step:
                   type: AquaTrivy
                   name: AquaTrivy_1
@@ -87,44 +94,3 @@ pipeline:
                       type: docker_v2
                       tag: v1.0.4
                       name: idasilva6/luffy
-    - stage:
-        name: approval
-        identifier: approval
-        description: ""
-        type: Approval
-        spec:
-          execution:
-            steps:
-              - step:
-                  name: approval
-                  identifier: approval
-                  type: HarnessApproval
-                  timeout: 1d
-                  spec:
-                    approvalMessage: |-
-                      Please review the following information
-                      and approve the pipeline progression
-                    includePipelineExecutionHistory: true
-                    approvers:
-                      minimumCount: 1
-                      disallowPipelineExecutor: false
-                      userGroups:
-                        - account._account_all_users
-                    isAutoRejectEnabled: false
-                    approverInputs: []
-        tags: {}
-    - stage:
-        name: Continuous Delivery
-        identifier: Continuous_Delivery
-        description: ""
-        type: Custom
-        spec:
-          execution:
-            steps:
-              - step:
-                  type: Wait
-                  name: Deployment
-                  identifier: Deployment
-                  spec:
-                    duration: 1m
-        tags: {}
