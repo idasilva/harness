@@ -27,6 +27,67 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: Gitleaks
+                  name: Gitleaks
+                  identifier: Gitleaks
+                  spec:
+                    mode: orchestration
+                    config: default
+                    target:
+                      type: repository
+                      detection: auto
+                    advanced:
+                      log:
+                        level: info
+                      fail_on_severity: critical
+              - step:
+                  type: Run
+                  name: Golang Lint
+                  identifier: Golang_Lint
+                  spec:
+                    connectorRef: dockerhub_main
+                    image: golangci/golangci-lint:v1.61-alpine
+                    shell: Sh
+                    command: |-
+                      set -e
+                      echo "🔍 Running golangci-lint..."
+
+                      cd  /harness/services/luffy
+
+                      golangci-lint run \
+                          --timeout=5m \
+                          --out-format=checkstyle \
+                          --issues-exit-code=0 \
+                          ./... > lint-report.xml || true
+
+                      golangci-lint run \
+                          --timeout=5m \
+                          --out-format=colored-line-number \
+                          ./...
+
+                      echo "✅ Linting complete!"
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - /harness/services/luffy/lint-report.xml
+              - step:
+                  type: Owasp
+                  name: OWASP Dependency-Check
+                  identifier: Owasp
+                  spec:
+                    mode: orchestration
+                    config: default
+                    target:
+                      type: repository
+                      detection: auto
+                    advanced:
+                      log:
+                        level: info
+                      fail_on_severity: critical
+                      args:
+                        cli: "--disableOssIndex"
+              - step:
                   type: Run
                   identifier: installgo
                   name: Install Go
