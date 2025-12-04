@@ -130,7 +130,7 @@ pipeline:
                     connectorRef: dockerhub_main
                     repo: idasilva6/luffy
                     tags:
-                      - v1.0.4
+                      - <+pipeline.sequenceId>
                     dockerfile: services/luffy/Dockerfile
                     context: services/luffy
               - step:
@@ -149,5 +149,5 @@ pipeline:
                     privileged: true
                     image:
                       type: docker_v2
-                      tag: v1.0.4
+                      tag: <+pipeline.sequenceId>
                       name: idasilva6/luffy
