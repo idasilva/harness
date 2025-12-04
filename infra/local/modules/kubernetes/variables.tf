@@ -12,5 +12,5 @@ variable "nodes" {
 variable "kubernetes_version" {
   description = "Kubernetes version (kind node image)"
   type        = string
-  default     = "v1.27.3"
+  default     = "v1.32.0"
 }
