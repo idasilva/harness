@@ -78,18 +78,21 @@ docker run -d \
 📦🚢 Pipeline strategy
 
 ```
-PR Opened → PR Pipeline (CI)
+PR Opened → PR Pipeline (CI + Security)
 ├── Clone code
-├── SAST scan (SonarQube)
+├── Secret Detection (Gitleaks)
+├── Linting (language-specific)
+├── SAST scan (SonarQube/Bandit)
+├── SCA - Dependency Check (OWASP Dependency-Check)
 ├── Run tests
-├── Build image
+├── Build image (tag: commit SHA)
 ├── Container scan (Trivy)
-└── Comment results on PR
+└── Comment aggregated results on PR
 
 PR Merged → Deploy Pipeline (CD)
-├── Pull latest image
+├── Pull latest image (pre-scanned from PR)
 ├── Deploy to dev
-├── DAST scan (OWASP ZAP)
+├── DAST scan (OWASP ZAP - on dev environment)
 ├── Approval
 ├── Deploy to staging
 ├── Integration tests
@@ -108,3 +111,4 @@ PR Merged → Deploy Pipeline (CD)
 - https://github.com/harness-community/harnesscd-example-apps/blob/master/sync-waves/manifests.yaml
 - https://registry.terraform.io/providers/harness/harness/latest/docs
 - https://developer.harness.io/docs/continuous-delivery/gitops/get-started/harness-cd-git-ops-quickstart
+- https://www.youtube.com/watch?v=gpoXT9eoSWg
