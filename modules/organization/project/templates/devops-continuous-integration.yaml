@@ -50,8 +50,6 @@ pipeline:
                     shell: Sh
                     command: |-
                       set -e
-                      echo "🔍 Running golangci-lint..."
-
                       cd  /harness/services/luffy
 
                       golangci-lint run \
@@ -64,8 +62,6 @@ pipeline:
                           --timeout=5m \
                           --out-format=colored-line-number \
                           ./...
-
-                      echo "✅ Linting complete!"
                     reports:
                       type: JUnit
                       spec:
