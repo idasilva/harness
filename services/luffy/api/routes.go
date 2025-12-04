@@ -17,9 +17,7 @@ type Context struct {
 }
 
 func (c *Context) Add(loadPaths func() []Routes) {
-	for _, handler := range loadPaths() {
-		c.Routes = append(c.Routes, handler)
-	}
+	c.Routes = append(c.Routes, loadPaths()...)
 }
 
 func (c *Context) handlers(api *API) {

@@ -11,7 +11,7 @@ var serveCmd = &cobra.Command{
 	Short: "serve the api",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logger, _ := zap.NewProduction()
-		defer logger.Sync()
+		defer func() { _ = logger.Sync() }()
 		
 		logger.Info("Executing server command")
 		err := modules.Application().Server()
