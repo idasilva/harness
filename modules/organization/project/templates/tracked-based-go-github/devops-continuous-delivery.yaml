@@ -13,6 +13,94 @@ pipeline:
         path: services/luffy
   stages:
     - stage:
+        name: Deploy To Development
+        identifier: Deploy_To_Development
+        description: ""
+        type: Deployment
+        spec:
+          deploymentType: NativeHelm
+          service:
+            serviceRef: service
+          environment:
+            environmentRef: dev
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: k8sdevelopment
+          execution:
+            steps:
+              - step:
+                  type: ShellScript
+                  name: Verify Signature - Cosign DEV
+                  identifier: Verify_Signature_Cosign
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: set -e
+                    environmentVariables: []
+                    outputVariables: []
+                  timeout: 10m
+                contextType: Pipeline
+              - step:
+                  name: Helm Deployment
+                  identifier: helmDeployment
+                  type: HelmDeploy
+                  timeout: 10m
+                  spec:
+                    skipDryRun: false
+            rollbackSteps:
+              - step:
+                  name: Helm Rollback
+                  identifier: helmRollback
+                  type: HelmRollback
+                  timeout: 10m
+                  spec: {}
+        tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: StageRollback
+    - stage:
+        name: OWASP ZAP
+        identifier: OWASP_ZAP
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          caching:
+            enabled: true
+            override: true
+          buildIntelligence:
+            enabled: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Zap
+                  name: OWASP ZAP
+                  identifier: OWASP_ZAP
+                  spec:
+                    mode: orchestration
+                    config: default
+                    target:
+                      type: instance
+                      detection: auto
+                    advanced:
+                      log:
+                        level: info
+                    instance:
+                      domain: luffy-services
+                      protocol: https
+    - stage:
         name: Approval Gate - Staging
         identifier: Approval_Gate_Staging
         description: ""
@@ -39,17 +127,25 @@ pipeline:
                     approverInputs: []
         tags: {}
     - stage:
-        name: Deploy to Staging
-        identifier: Deploy_to_Staging
+        name: Deploy To Staging
+        identifier: Deploy_To_Staging
         description: ""
-        type: Custom
+        type: Deployment
         spec:
+          deploymentType: NativeHelm
+          service:
+            serviceRef: service
+          environment:
+            environmentRef: dev
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: k8sdevelopment
           execution:
             steps:
               - step:
                   type: ShellScript
-                  name: Verify Signature - Cosign
-                  identifier: Verify_Signature_Cosign
+                  name: Verify Signature - Cosign STG
+                  identifier: Verify_Signature_Cosign_STG
                   spec:
                     shell: Bash
                     executionTarget: {}
@@ -60,7 +156,27 @@ pipeline:
                     environmentVariables: []
                     outputVariables: []
                   timeout: 10m
+              - step:
+                  name: Helm Deployment
+                  identifier: helmDeployment
+                  type: HelmDeploy
+                  timeout: 10m
+                  spec:
+                    skipDryRun: false
+            rollbackSteps:
+              - step:
+                  name: Helm Rollback
+                  identifier: helmRollback
+                  type: HelmRollback
+                  timeout: 10m
+                  spec: {}
         tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: StageRollback
     - stage:
         name: Approval Gate - Production
         identifier: Approval_Gate_Production
@@ -91,14 +207,22 @@ pipeline:
         name: Deploy to Production
         identifier: Deploy_to_Production
         description: ""
-        type: Custom
+        type: Deployment
         spec:
+          deploymentType: NativeHelm
+          service:
+            serviceRef: service
+          environment:
+            environmentRef: dev
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: k8sdevelopment
           execution:
             steps:
               - step:
                   type: ShellScript
-                  name: Verify Signature - Cosign
-                  identifier: Verify_Signature_Cosign
+                  name: Verify Signature - Cosign PROD
+                  identifier: Verify_Signature_Cosign_PROD
                   spec:
                     shell: Bash
                     executionTarget: {}
@@ -109,4 +233,24 @@ pipeline:
                     environmentVariables: []
                     outputVariables: []
                   timeout: 10m
+              - step:
+                  name: Helm Deployment
+                  identifier: helmDeployment
+                  type: HelmDeploy
+                  timeout: 10m
+                  spec:
+                    skipDryRun: false
+            rollbackSteps:
+              - step:
+                  name: Helm Rollback
+                  identifier: helmRollback
+                  type: HelmRollback
+                  timeout: 10m
+                  spec: {}
         tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: StageRollback
