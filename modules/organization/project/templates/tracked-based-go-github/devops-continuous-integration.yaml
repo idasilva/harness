@@ -168,4 +168,3 @@ pipeline:
                       type: docker_v2
                       tag: <+pipeline.sequenceId>
                       name: idasilva6/luffy
-
