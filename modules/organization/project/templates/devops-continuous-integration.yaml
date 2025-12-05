@@ -134,6 +134,23 @@ pipeline:
                     dockerfile: services/luffy/Dockerfile
                     context: services/luffy
               - step:
+                  type: SscaArtifactSigning
+                  name: Artifact Signing - Cosign
+                  identifier: Artifact_Signing_Cosign
+                  spec:
+                    source:
+                      type: docker
+                      spec:
+                        connector: dockerhub_main
+                        image: <+pipeline.sequenceId>
+                    signing:
+                      type: cosign
+                      spec:
+                        private_key: cosign_private_ket_file
+                        password: cosing_password
+                    uploadSignature:
+                      upload: true
+              - step:
                   type: AquaTrivy
                   name: AquaTrivy_1
                   identifier: AquaTrivy_1
