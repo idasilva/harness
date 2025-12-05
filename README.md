@@ -80,24 +80,41 @@ docker run -d \
 ```
 PR Opened → PR Pipeline (CI + Security)
 ├── Clone code
+│   └── Get code from PR branch to start analysis
 ├── Secret Detection (Gitleaks)
+│   └── Find accidentally committed secrets (API keys, passwords, tokens)
 ├── Linting (language-specific)
+│   └── Enforce code quality (syntax errors, bad practices, style violations)
 ├── SAST scan (SonarQube/Bandit)
+│   └── Find security vulnerabilities in source code (SQL injection, insecure functions)
 ├── SCA - Dependency Check (OWASP Dependency-Check)
+│   └── Find vulnerabilities in libraries you use (outdated packages, known CVEs)
 ├── Run tests
+│   └── Verify code works correctly (functionality, regressions, edge cases)
 ├── Build image (tag: commit SHA)
+│   └── Package app into Docker container with traceable version
 ├── Container scan (Trivy)
+│   └── Find vulnerabilities in Docker image (vulnerable base images, misconfigurations)
 └── Comment aggregated results on PR
+    └── Post all scan results as single PR comment for developer feedback
 
 PR Merged → Deploy Pipeline (CD)
 ├── Pull latest image (pre-scanned from PR)
+│   └── Get the Docker image that already passed security checks
 ├── Deploy to dev
+│   └── Run app in development environment
 ├── DAST scan (OWASP ZAP - on dev environment)
+│   └── Test running application for runtime vulnerabilities (XSS, CSRF, security headers)
 ├── Approval
+│   └── Human gate - review DAST results before promoting
 ├── Deploy to staging
+│   └── Test in production-like environment
 ├── Integration tests
+│   └── Test how components work together (database, APIs, services)
 ├── Approval
+│   └── Final human check before production
 └── Deploy to production
+    └── Ship it!
 ```
 
 📚 References

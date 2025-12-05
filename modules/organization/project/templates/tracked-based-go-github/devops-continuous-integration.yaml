@@ -27,6 +27,63 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: Gitleaks
+                  name: Gitleaks
+                  identifier: Gitleaks
+                  spec:
+                    mode: orchestration
+                    config: default
+                    target:
+                      type: repository
+                      detection: auto
+                    advanced:
+                      log:
+                        level: info
+                      fail_on_severity: critical
+              - step:
+                  type: Run
+                  name: Golang Lint
+                  identifier: Golang_Lint
+                  spec:
+                    connectorRef: dockerhub_main
+                    image: golangci/golangci-lint:v1.61-alpine
+                    shell: Sh
+                    command: |-
+                      set -e
+                      cd  /harness/services/luffy
+
+                      golangci-lint run \
+                          --timeout=5m \
+                          --out-format=checkstyle \
+                          --issues-exit-code=0 \
+                          ./... > lint-report.xml || true
+
+                      golangci-lint run \
+                          --timeout=5m \
+                          --out-format=colored-line-number \
+                          ./...
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - /harness/services/luffy/lint-report.xml
+              - step:
+                  type: Owasp
+                  name: OWASP Dependency-Check
+                  identifier: Owasp
+                  spec:
+                    mode: orchestration
+                    config: default
+                    target:
+                      type: repository
+                      detection: auto
+                    advanced:
+                      log:
+                        level: info
+                      fail_on_severity: critical
+                      args:
+                        cli: "--disableOssIndex"
+              - step:
                   type: Run
                   identifier: installgo
                   name: Install Go
@@ -73,9 +130,26 @@ pipeline:
                     connectorRef: dockerhub_main
                     repo: idasilva6/luffy
                     tags:
-                      - v1.0.4
+                      - <+pipeline.sequenceId>
                     dockerfile: services/luffy/Dockerfile
                     context: services/luffy
+              - step:
+                  type: SscaArtifactSigning
+                  name: Artifact Signing - Cosign
+                  identifier: Artifact_Signing_Cosign
+                  spec:
+                    source:
+                      type: docker
+                      spec:
+                        connector: dockerhub_main
+                        image: <+pipeline.sequenceId>
+                    signing:
+                      type: cosign
+                      spec:
+                        private_key: cosign_private_ket_file
+                        password: cosing_password
+                    uploadSignature:
+                      upload: true
               - step:
                   type: AquaTrivy
                   name: AquaTrivy_1
@@ -92,5 +166,5 @@ pipeline:
                     privileged: true
                     image:
                       type: docker_v2
-                      tag: v1.0.4
+                      tag: <+pipeline.sequenceId>
                       name: idasilva6/luffy
