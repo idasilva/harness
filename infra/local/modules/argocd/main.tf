@@ -23,3 +23,29 @@ resource "helm_release" "argocd" {
 EOF
   ]
 }
+
+
+# Argo Rollouts Helm Release
+resource "helm_release" "argo_rollouts" {
+  name             = "argo-rollouts"
+  chart            = "argo-rollouts"
+  repository       = "https://argoproj.github.io/argo-helm"
+  version          = "2.38.1"
+  namespace        = var.argocd_namespace
+  create_namespace = true
+  timeout          = 600
+
+  values = [<<EOF
+controller:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false
+
+notifications:
+  enabled: false
+EOF
+  ]
+
+  depends_on = [helm_release.argocd]
+}
