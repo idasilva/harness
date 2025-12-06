@@ -14,3 +14,8 @@ variable "kubernetes_version" {
   type        = string
   default     = "v1.32.0"
 }
+
+variable "default_namespaces" {
+  type    = list(string)
+  default = ["development", "staging", "production"]
+}

@@ -4,6 +4,7 @@ module "k8s" {
   cluster_name       = var.cluster_name
   nodes              = var.nodes
   kubernetes_version = var.kubernetes_version
+  default_namespaces = var.default_namespaces
 }
 
 module "argocd" {
