@@ -15,3 +15,15 @@ variable "kubernetes_version" {
   type        = string
   default     = "v1.32.0"
 }
+
+variable "ngrok_api_key" {
+  description = "ngrok API Key"
+  type        = string
+  sensitive   = true
+}
+
+variable "ngrok_authtoken" {
+  description = "ngrok Auth Token"
+  type        = string
+  sensitive   = true
+}
