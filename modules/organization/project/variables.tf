@@ -57,3 +57,34 @@ variable "dockerhub_repo" {
   type        = string
   default     = ""
 }
+
+variable "organization_id" {
+  description = "Harness organization ID"
+  type        = string
+  default     = "default"
+}
+
+variable "project" {
+  description = "Project identifier"
+  type        = string
+}
+
+variable "github_connector_ref" {
+  description = "GitHub connector reference"
+  type        = string
+  default     = "github_main"
+}
+
+variable "k8s_connector_ref" {
+  description = "Kubernetes connector reference"
+  type        = string
+  default     = "k8s_cluster"
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default = {
+    "infra/provisioned-by" = "terraform"
+  }
+}

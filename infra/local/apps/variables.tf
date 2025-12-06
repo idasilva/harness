@@ -19,11 +19,19 @@ variable "kubernetes_version" {
 variable "ngrok_api_key" {
   description = "ngrok API Key"
   type        = string
+  default = "XPTO"
   sensitive   = true
 }
 
 variable "ngrok_authtoken" {
   description = "ngrok Auth Token"
   type        = string
+  default = "XPTO"
   sensitive   = true
+}
+
+variable "default_namespaces" {
+  description = "Default namespaces to create"
+  type        = list(string)
+  default     = ["development", "staging", "production"]
 }

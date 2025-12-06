@@ -5,7 +5,7 @@ resource "harness_platform_triggers" "pr_trigger" {
   name       = "DEVOPS - GITHUB PR TRIGGER GOLANG"
   target_id  = harness_platform_pipeline.ci_pipeline.identifier
   
-  yaml = templatefile("${path.module}/templates/tracked-based-go-github/devops-github-pr-trigger.yaml", {
+  yaml = templatefile("${path.module}/templates/tracked-based-go-github/triggers/devops-github-pr-trigger.yaml", {
     TRIGGER_NAME        = "DEVOPS - GITHUB PR TRIGGER GOLANG"
     TRIGGER_IDENTIFIER  = "devops_github_pr_trigger"
     PROJECT_ID          = harness_platform_project.ck_project.id
@@ -27,7 +27,7 @@ resource "harness_platform_triggers" "merge_trigger" {
   name       = "DEVOPS - GITHUB MERGE TRIGGER GOLANG"
   target_id  = harness_platform_pipeline.cd_pipeline.identifier
   
-  yaml = templatefile("${path.module}/templates/tracked-based-go-github/devops-github-merge-trigger.yaml", {
+  yaml = templatefile("${path.module}/templates/tracked-based-go-github/triggers/devops-github-merge-trigger.yaml", {
     TRIGGER_NAME        = "DEVOPS - GITHUB MERGE TRIGGER GOLANG"
     TRIGGER_IDENTIFIER  = "devops_github_merge_trigger"
     PROJECT_ID          = harness_platform_project.ck_project.id

@@ -1,0 +1,73 @@
+{{- if .Values.extraIngress.enabled -}}
+{{- $fullName := include "nami-apps.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+
+{{- /* Determine service name - use active service if blue-green is enabled */ -}}
+{{- $serviceName := $fullName -}}
+{{- if and .Values.rolloutStrategy .Values.rolloutStrategy.blueGreen -}}
+  {{- $serviceName = printf "%s-active" $fullName -}}
+{{- end -}}
+
+{{- if and .Values.extraIngress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.extraIngress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.extraIngress.annotations "kubernetes.io/ingress.class" .Values.extraIngress.className}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-internal
+  labels:
+    {{- include "nami-apps.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  {{- with .Values.extraIngress.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if and .Values.extraIngress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
+  ingressClassName: {{ .Values.extraIngress.className }}
+  {{- end }}
+  {{- if .Values.extraIngress.tls }}
+  tls:
+    {{- range .Values.extraIngress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.extraIngress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- if .extraPaths }}
+          {{- toYaml .extraPaths | nindent 10 }}
+          {{- end }}
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+            pathType: {{ .pathType }}
+            {{- end }}
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $serviceName }}
+                port:
+                  number: {{ $svcPort }}
+              {{- else }}
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $svcPort }}
+              {{- end }}
+          {{- end }}
+    {{- end }}
+{{- end }}

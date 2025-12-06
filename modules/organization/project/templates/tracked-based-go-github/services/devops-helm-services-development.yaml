@@ -1,0 +1,30 @@
+service:
+  name: ${service_name}_${service_id}
+  identifier: ${service_id}
+  serviceDefinition:
+    type: NativeHelm
+    spec:
+      manifests:
+        - manifest:
+            identifier: ${service_name}
+            type: HelmChart
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: ${connector_ref}
+                  gitFetchType: Branch
+                  folderPath: ${folder_path}
+                  repoName: ${repo_name}
+                  branch: ${branch}
+              subChartPath: ""
+              valuesPaths:
+                - ${values_file}
+              optionalValuesYaml: false
+              skipResourceVersioning: false
+              enableDeclarativeRollback: false
+              helmVersion: V3
+              fetchHelmChartMetadata: false
+  gitOpsEnabled: false
+  orgIdentifier: ${org_id}
+  projectIdentifier: ${project_id}

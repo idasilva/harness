@@ -33,3 +33,23 @@ KINDCONFIG
     command = "kind delete cluster --name ${self.triggers.cluster_name} || true"
   }
 }
+
+resource "kubernetes_namespace" "default_namespaces" {
+  for_each = toset(var.default_namespaces)
+
+  metadata {
+    name = each.value
+    
+    labels = {
+      name        = each.value
+      environment = each.value
+      managed-by  = "terraform"
+    }
+
+    annotations = {
+      created-by = "terraform"
+    }
+  }
+
+  depends_on = [null_resource.kind_cluster]
+}

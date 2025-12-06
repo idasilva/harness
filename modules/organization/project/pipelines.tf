@@ -4,7 +4,7 @@ resource "harness_platform_pipeline" "ci_pipeline" {
   project_id = var.project
   name       = "DEVOPS - CONTINUOUS INTEGRATION GOLANG"
   
-  yaml = templatefile("${path.module}/templates/tracked-based-go-github/devops-continuous-integration.yaml", {
+  yaml = templatefile("${path.module}/templates/tracked-based-go-github/pipelines/devops-continuous-integration.yaml", {
     PROJECT_ID_PLACEHOLDER = var.project,
     ORG_ID_PLACEHOLDER     = var.organization_id,
     PIPELINE_NAME          = "DEVOPS - CONTINUOUS INTEGRATION GOLANG"
@@ -19,7 +19,7 @@ resource "harness_platform_pipeline" "cd_pipeline" {
   project_id = var.project
   name       = "DEVOPS - CONTINUOUS DELIVERY GOLANG"
   
-  yaml = templatefile("${path.module}/templates/tracked-based-go-github/devops-continuous-delivery.yaml", {
+  yaml = templatefile("${path.module}/templates/tracked-based-go-github/pipelines/devops-continuous-delivery.yaml", {
     PROJECT_ID_PLACEHOLDER = var.project,
     ORG_ID_PLACEHOLDER     = var.organization_id,
     PIPELINE_NAME          = "DEVOPS - CONTINUOUS DELIVERY GOLANG"
