@@ -6,7 +6,7 @@ service:
     spec:
       manifests:
         - manifest:
-            identifier: fully_charts
+            identifier: luffy
             type: HelmChart
             spec:
               store:
@@ -14,7 +14,7 @@ service:
                 spec:
                   connectorRef: github_main
                   gitFetchType: Branch
-                  folderPath: /services/luffy/deployment/helm/charts/
+                  folderPath: /services/luffy/deployment/luffy-apps
                   repoName: harness
                   branch: main
               subChartPath: ""
