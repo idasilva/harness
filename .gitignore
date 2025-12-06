@@ -42,3 +42,57 @@ terraform.rc
 # .terraform.lock.hcl files
 **/.terraform.lock.hcl
 .terraform.lock.hcl
+
+
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+
+
+
+# Maven
+target/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Compiled files
+*.class
+
+# Package files
+*.jar
+*.war
+
+# OS
+.DS_Store
+
+# Logs
+*.log
