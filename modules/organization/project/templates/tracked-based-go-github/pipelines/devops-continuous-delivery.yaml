@@ -20,12 +20,12 @@ pipeline:
         spec:
           deploymentType: NativeHelm
           service:
-            serviceRef: service
+            serviceRef: helm_service
           environment:
             environmentRef: dev
             deployToAll: false
             infrastructureDefinitions:
-              - identifier: k8sdevelopment
+              - identifier: k8s_integration
           execution:
             steps:
               - step:
@@ -50,6 +50,7 @@ pipeline:
                   timeout: 10m
                   spec:
                     skipDryRun: false
+                    ignoreReleaseHistFailStatus: false
             rollbackSteps:
               - step:
                   name: Helm Rollback
@@ -98,8 +99,9 @@ pipeline:
                       log:
                         level: info
                     instance:
-                      domain: luffy-services
+                      domain: https://tamekia-uneternized-alease.ngrok-free.dev
                       protocol: https
+                      path: v1/version
     - stage:
         name: Approval Gate - Staging
         identifier: Approval_Gate_Staging
@@ -134,12 +136,12 @@ pipeline:
         spec:
           deploymentType: NativeHelm
           service:
-            serviceRef: service
+            serviceRef: helm_service_staging
           environment:
-            environmentRef: dev
+            environmentRef: Staging
             deployToAll: false
             infrastructureDefinitions:
-              - identifier: k8sdevelopment
+              - identifier: k8s_integration
           execution:
             steps:
               - step:
@@ -211,12 +213,12 @@ pipeline:
         spec:
           deploymentType: NativeHelm
           service:
-            serviceRef: service
+            serviceRef: helm_service_production
           environment:
-            environmentRef: dev
+            environmentRef: production
             deployToAll: false
             infrastructureDefinitions:
-              - identifier: k8sdevelopment
+              - identifier: k8s_integration
           execution:
             steps:
               - step:

@@ -3,6 +3,14 @@ locals {
     dev = {
       name = "Development"
       type = "PreProduction"
+    },
+     staging = {
+      name = "Staging"
+      type = "PreProduction"
+    },
+     production = {
+      name = "Production"
+      type = "PreProduction"
     }
   }
 }

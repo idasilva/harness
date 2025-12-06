@@ -1,0 +1,30 @@
+service:
+  name: helm_service_staging
+  identifier: helm_service_staging
+  serviceDefinition:
+    type: NativeHelm
+    spec:
+      manifests:
+        - manifest:
+            identifier: luffy
+            type: HelmChart
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: github_main
+                  gitFetchType: Branch
+                  folderPath: /services/luffy/deployment/luffy-apps
+                  repoName: harness
+                  branch: main
+              subChartPath: ""
+              valuesPaths:
+                - /services/luffy/deployment/luffy-apps/staging-values.yaml
+              optionalValuesYaml: false
+              skipResourceVersioning: false
+              enableDeclarativeRollback: false
+              helmVersion: V3
+              fetchHelmChartMetadata: false
+  gitOpsEnabled: false
+  orgIdentifier: default
+  projectIdentifier: grand_line

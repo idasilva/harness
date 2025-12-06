@@ -1,0 +1,13 @@
+infrastructureDefinition:
+  name: k8s_integration
+  identifier: k8s_integration
+  orgIdentifier: default
+  projectIdentifier: grand_line
+  environmentRef: dev
+  deploymentType: NativeHelm
+  type: KubernetesDirect
+  spec:
+    connectorRef: k8s_connector
+    namespace: development
+    releaseName: release-<+INFRA_KEY_SHORT_ID>
+  allowSimultaneousDeployments: false
