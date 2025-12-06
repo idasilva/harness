@@ -77,7 +77,7 @@ resource "harness_platform_gitops_repository" "repo" {
   identifier = "${var.project}_gitops_repo"
   project_id = var.project
   org_id     = var.organization_id
-  agent_id   = "project1_gitops_agent"
+  agent_id   = "${var.project}_gitops_agent"
 
   repo {
     repo            = "https://github.com/${var.github_repo}"

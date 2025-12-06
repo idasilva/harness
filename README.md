@@ -117,6 +117,14 @@ PR Merged → Deploy Pipeline (CD)
     └── Ship it!
 ```
 
+
+Good to Know
+
+```
+terraform state list | xargs -n1 terraform state rm
+```
+
+
 📚 References
 
 - https://github.com/harness/harness
