@@ -28,7 +28,7 @@ pipeline:
             steps:
               - step:
                   type: Run
-                  name: Run Tests with Coverage
+                  name: Run Tests
                   identifier: pytest
                   spec:
                     connectorRef: dockerhub_main
@@ -37,7 +37,8 @@ pipeline:
                     command: |-
                       cd /harness/services/nami
                       pip install -r requirements.txt
-                      pytest -v --cov=. --cov-report=xml --cov-report=term --junitxml=junit.xml
+                      pip install pytest pytest-cov
+                      pytest --cov=. --cov-report=xml --cov-report=term-missing --junitxml=junit.xml
                     reports:
                       type: JUnit
                       spec:

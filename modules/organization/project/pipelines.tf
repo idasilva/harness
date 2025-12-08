@@ -58,3 +58,35 @@ resource "harness_platform_pipeline" "cd_pipeline_java" {
   })
   depends_on = [ harness_platform_project.ck_project ]
 }
+
+
+
+resource "harness_platform_pipeline" "ci_pipeline_python" {
+  identifier = "ci_build_push_python"
+  org_id     = var.organization_id
+  project_id = var.project
+  name       = "DEVOPS - CONTINUOUS INTEGRATION PYTHON"
+  
+  yaml = templatefile("${path.module}/templates/tracked-based-python-github/pipelines/devops-continuous-integration.yaml", {
+    PROJECT_ID_PLACEHOLDER = var.project,
+    ORG_ID_PLACEHOLDER     = var.organization_id,
+    PIPELINE_NAME          = "DEVOPS - CONTINUOUS INTEGRATION PYTHON"
+    PIPELINE_IDENTIFIER    = "ci_build_push_python"
+  })
+  depends_on = [ harness_platform_project.ck_project ]
+}
+
+resource "harness_platform_pipeline" "cd_pipeline_python" {
+  identifier = "cd_deploy_python"
+  org_id     = var.organization_id
+  project_id = var.project
+  name       = "DEVOPS - CONTINUOUS DELIVERY PYTHON"
+  
+  yaml = templatefile("${path.module}/templates/tracked-based-python-github/pipelines/devops-continuous-delivery.yaml", {
+    PROJECT_ID_PLACEHOLDER = var.project,
+    ORG_ID_PLACEHOLDER     = var.organization_id,
+    PIPELINE_NAME          = "DEVOPS - CONTINUOUS DELIVERY PYTHON"
+    PIPELINE_IDENTIFIER    = "cd_deploy_python"
+  })
+  depends_on = [ harness_platform_project.ck_project ]
+}

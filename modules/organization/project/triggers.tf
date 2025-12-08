@@ -80,3 +80,44 @@ resource "harness_platform_triggers" "merge_trigger_java" {
   
   depends_on = [harness_platform_pipeline.cd_pipeline_java]
 }
+
+
+resource "harness_platform_triggers" "pr_trigger_python" {
+  identifier = "devops_github_pr_trigger_python"
+  org_id     = var.organization_id
+  project_id = harness_platform_project.ck_project.id
+  name       = "DEVOPS - GITHUB PR TRIGGER PYTHON"
+  target_id  = harness_platform_pipeline.ci_pipeline_python.identifier
+  
+  yaml = templatefile("${path.module}/templates/tracked-based-python-github/triggers/devops-github-pr-trigger.yaml", {
+    TRIGGER_NAME        = "DEVOPS - GITHUB PR TRIGGER PYTHON"
+    TRIGGER_IDENTIFIER  = "devops_github_pr_trigger_python"
+    PROJECT_ID          = harness_platform_project.ck_project.id
+    ORG_ID              = var.organization_id
+    PIPELINE_ID         = harness_platform_pipeline.ci_pipeline_python.identifier
+    GITHUB_CONNECTOR    = "github_main"
+    TARGET_BRANCH       = "main"
+  })
+  
+  depends_on = [harness_platform_pipeline.ci_pipeline_python]
+}
+
+resource "harness_platform_triggers" "merge_trigger_python" {
+  identifier = "devops_github_merge_trigger_python"
+  org_id     = var.organization_id
+  project_id = harness_platform_project.ck_project.id
+  name       = "DEVOPS - GITHUB MERGE TRIGGER PYTHON"
+  target_id  = harness_platform_pipeline.cd_pipeline_python.identifier
+  
+  yaml = templatefile("${path.module}/templates/tracked-based-python-github/triggers/devops-github-merge-trigger.yaml", {
+    TRIGGER_NAME        = "DEVOPS - GITHUB MERGE TRIGGER PYTHON"
+    TRIGGER_IDENTIFIER  = "devops_github_merge_trigger_python"
+    PROJECT_ID          = harness_platform_project.ck_project.id
+    ORG_ID              = var.organization_id
+    PIPELINE_ID         = harness_platform_pipeline.cd_pipeline_python.identifier
+    GITHUB_CONNECTOR    = "github_main"
+    TARGET_BRANCH       = "main"
+  })
+  
+  depends_on = [harness_platform_pipeline.cd_pipeline_python]
+}

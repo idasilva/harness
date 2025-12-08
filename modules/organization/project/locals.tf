@@ -33,12 +33,12 @@ locals {
       folder_path = "/services/usopp/deployment/usopp-apps"
       type        = "java"
     }
-    # nami = {
-    #   name        = "nami-service"
-    #   repo_name   = "harness"
-    #   folder_path = "/services/nami/deployment/nami-apps"
-    #   type        = "python"
-    # }
+    nami = {
+      name        = "nami-service"
+      repo_name   = "harness"
+      folder_path = "/services/nami/deployment/nami-apps"
+      type        = "python"
+    }
   }
 
   # Create service-environment pairs
