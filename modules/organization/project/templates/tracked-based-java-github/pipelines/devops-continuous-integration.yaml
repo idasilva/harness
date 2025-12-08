@@ -27,6 +27,33 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: Run
+                  name: Run Tests
+                  identifier: Run_Tests
+                  spec:
+                    connectorRef: dockerhub_main
+                    image: maven:3.9-eclipse-temurin-17
+                    shell: Sh
+                    command: |-
+                      cd /harness/services/usopp
+                      mvn test
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - /harness/services/usopp/target/surefire-reports/*.xml
+              - step:
+                  type: Run
+                  name: Checkstyle
+                  identifier: Checkstyle
+                  spec:
+                    connectorRef: dockerhub_main
+                    image: maven:3.9-eclipse-temurin-17
+                    shell: Sh
+                    command: |-
+                      cd /harness/services/usopp
+                      mvn checkstyle:check
+              - step:
                   type: BuildAndPushDockerRegistry
                   name: BuildAndPushDockerRegistry_1
                   identifier: BuildAndPushDockerRegistry_1
