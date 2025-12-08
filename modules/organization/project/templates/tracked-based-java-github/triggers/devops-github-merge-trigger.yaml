@@ -22,14 +22,14 @@ trigger:
               value: ${TARGET_BRANCH}
             - key: changedFiles
               operator: Contains
-              value: /services/luffy
+              value: /services/usopp
           headerConditions: []
           repoName: harness
           actions:
             - Close
   inputYaml: |
     pipeline:
-      identifier: cd_deploy
+      identifier: cd_deploy_java
       properties:
         ci:
           codebase:

@@ -1,0 +1,108 @@
+pipeline:
+  name: ${PIPELINE_NAME}
+  identifier: ${PIPELINE_IDENTIFIER}
+  projectIdentifier: ${PROJECT_ID_PLACEHOLDER}
+  orgIdentifier: ${ORG_ID_PLACEHOLDER}
+  properties:
+    ci:
+      codebase:
+        connectorRef: github_main
+        build: <+input>
+        repoName: <+input>  
+        branch: main
+        path: services/usopp
+  stages:
+    - stage:
+        name: Continuous Integration
+        identifier: build_push
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: BuildAndPushDockerRegistry_1
+                  identifier: BuildAndPushDockerRegistry_1
+                  spec:
+                    connectorRef: dockerhub_main
+                    repo: idasilva6/usopp
+                    tags:
+                      - <+pipeline.sequenceId>
+                    dockerfile: services/usopp/Dockerfile
+                    context: services/usopp
+                contextType: Pipeline
+              - step:
+                  type: Run
+                  name: Artifact Signing - Cosign Java Image
+                  identifier: Artifact_Signing_Cosign_Java_Image
+                  spec:
+                    connectorRef: dockerhub_main
+                    image: bitnami/cosign:latest
+                    shell: Bash
+                    command: |-
+                      set -e
+
+                      echo '<+secrets.getValue("cosign_private_ket_file")>' > cosign.key
+                      export COSIGN_PASSWORD='Cosign@4826370'
+
+                      cosign sign --key cosign.key --registry-username idasilva6 --registry-password dckr_pat_KXquQaMsEkXCGTh_IZJY0Ws-TpA --yes $IMAGE_TAG
+                      rm -f cosign.key
+                    envVariables:
+                      COSIGN_PASSWORD: Cosign@4826370
+                      IMAGE_TAG: idasilva6/usopp:<+pipeline.sequenceId>
+                contextType: Pipeline
+              - step:
+                  type: Gitleaks
+                  name: Gitleaks
+                  identifier: Gitleaks
+                  spec:
+                    mode: orchestration
+                    config: default
+                    target:
+                      type: repository
+                      detection: auto
+                    advanced:
+                      log:
+                        level: info
+                      fail_on_severity: critical
+              - step:
+                  type: Owasp
+                  name: OWASP Dependency-Check
+                  identifier: Owasp
+                  spec:
+                    mode: orchestration
+                    config: default
+                    target:
+                      type: repository
+                      detection: auto
+                    advanced:
+                      log:
+                        level: info
+                      fail_on_severity: critical
+                      args:
+                        cli: "--disableOssIndex"
+              - step:
+                  type: AquaTrivy
+                  name: AquaTrivy_1
+                  identifier: AquaTrivy_1
+                  spec:
+                    mode: orchestration
+                    config: default
+                    target:
+                      type: container
+                      detection: auto
+                    advanced:
+                      log:
+                        level: info
+                    privileged: true
+                    image:
+                      type: docker_v2
+                      tag: <+pipeline.sequenceId>
+                      name: idasilva6/usopp
