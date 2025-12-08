@@ -22,7 +22,7 @@ trigger:
               value: ${TARGET_BRANCH}
             - key: changedFiles
               operator: Contains
-              value: /services/luffy
+              value: /services/usopp
           headerConditions: []
           repoName: harness
           actions:

@@ -3,13 +3,13 @@ locals {
     development = {
       name        = "Development"
       type        = "PreProduction"
-      branch      = "develop"
+      branch      = "main"
       namespace   = "development"
     }
     staging = {
       name        = "Staging"
       type        = "PreProduction"
-      branch      = "staging"
+      branch      = "main"
       namespace   = "staging"
     }
     production = {
@@ -27,12 +27,12 @@ locals {
       folder_path = "/services/luffy/deployment/luffy-apps"
       type        = "go"
     }
-    # usopp = {
-    #   name        = "usopp-service"
-    #   repo_name   = "harness"
-    #   folder_path = "/services/usopp/deployment/usopp-apps"
-    #   type        = "java"
-    # }
+    usopp = {
+      name        = "usopp-service"
+      repo_name   = "harness"
+      folder_path = "/services/usopp/deployment/usopp-apps"
+      type        = "java"
+    }
     # nami = {
     #   name        = "nami-service"
     #   repo_name   = "harness"

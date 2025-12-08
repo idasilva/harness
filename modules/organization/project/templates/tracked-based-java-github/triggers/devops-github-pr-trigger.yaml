@@ -20,6 +20,9 @@ trigger:
             - key: targetBranch
               operator: Equals
               value: ${TARGET_BRANCH}
+            - key: changedFiles
+              operator: Contains
+              value: /services/usopp
           headerConditions: []
           repoName: harness
           actions:

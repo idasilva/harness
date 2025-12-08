@@ -10,7 +10,7 @@ pipeline:
         build: <+input>
         repoName: <+input>  
         branch: main
-        path: services/luffy
+        path: services/usopp
   stages:
     - stage:
         name: Deploy To Development

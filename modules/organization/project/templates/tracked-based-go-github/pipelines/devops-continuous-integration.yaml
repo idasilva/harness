@@ -52,7 +52,7 @@ pipeline:
                       echo '<+secrets.getValue("cosign_private_ket_file")>' > cosign.key
                       export COSIGN_PASSWORD='Cosign@4826370'
 
-                      cosign sign --key cosign.key --registry-username idasilva6 --registry-password dckr_pat_XKeokBz87EqiQ4nxcd464D5Vts0 --yes $IMAGE_TAG
+                      cosign sign --key cosign.key --registry-username idasilva6 --registry-password dckr_pat_KXquQaMsEkXCGTh_IZJY0Ws-TpA --yes $IMAGE_TAG
                       rm -f cosign.key
                     envVariables:
                       COSIGN_PASSWORD: Cosign@4826370
