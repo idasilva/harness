@@ -10,5 +10,5 @@ terraform {
 provider "harness" {
   endpoint         = "https://app.harness.io/gateway"
   account_id       = "XPTO"
-  platform_api_key = "XPTO"
+  platform_api_key = "XPTO
 }

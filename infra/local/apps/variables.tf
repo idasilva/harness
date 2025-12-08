@@ -19,14 +19,14 @@ variable "kubernetes_version" {
 variable "ngrok_api_key" {
   description = "ngrok API Key"
   type        = string
-  default = "XPTO"
+  default = "36U4gleHGEivpqxNqeXoaAGSHhd_6gaEUwqoS9wnfsX5QCAGH"
   sensitive   = true
 }
 
 variable "ngrok_authtoken" {
   description = "ngrok Auth Token"
   type        = string
-  default = "XPTO"
+  default = "36JSCOFO7aieRWxwURYwzq3WlOl_7KWuNQZwnT4ejqu7nrxRk"
   sensitive   = true
 }
 

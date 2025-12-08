@@ -25,3 +25,12 @@ module "ngrok" {
 
   depends_on = [ module.k8s ]
 }
+
+
+module "harness_delegate" {
+  source = "../modules/delegate"
+
+  delegate_name  = "helm-delegate"
+  account_id     = "XPTO"
+  delegate_token = "XPTO"
+}
