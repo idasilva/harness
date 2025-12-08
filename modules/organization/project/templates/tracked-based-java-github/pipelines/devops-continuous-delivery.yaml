@@ -20,7 +20,7 @@ pipeline:
         spec:
           deploymentType: NativeHelm
           service:
-            serviceRef: luffy_development
+            serviceRef: usopp_development
           environment:
             environmentRef: development
             deployToAll: false
@@ -101,7 +101,7 @@ pipeline:
                     instance:
                       domain: https://tamekia-uneternized-alease.ngrok-free.dev
                       protocol: https
-                      path: v1/version
+                      path: java/v1/version
     - stage:
         name: Approval Gate - Staging
         identifier: Approval_Gate_Staging
@@ -136,7 +136,7 @@ pipeline:
         spec:
           deploymentType: NativeHelm
           service:
-            serviceRef: luffy_staging
+            serviceRef: usopp_staging
           environment:
             environmentRef: staging
             deployToAll: false
@@ -213,7 +213,7 @@ pipeline:
         spec:
           deploymentType: NativeHelm
           service:
-            serviceRef: luffy_production
+            serviceRef: usopp_production
           environment:
             environmentRef: production
             deployToAll: false
