@@ -1,30 +1,30 @@
 service:
-  name: helm_service_production
-  identifier: helm_service_production
+  name: ${service_name}_${env_key}
+  identifier: ${service_id}
   serviceDefinition:
     type: NativeHelm
     spec:
       manifests:
         - manifest:
-            identifier: luffy
+            identifier: ${service_name}
             type: HelmChart
             spec:
               store:
                 type: Github
                 spec:
-                  connectorRef: github_main
+                  connectorRef: ${connector_ref}
                   gitFetchType: Branch
-                  folderPath: /services/luffy/deployment/luffy-apps
-                  repoName: harness
-                  branch: main
+                  folderPath: ${folder_path}
+                  repoName: ${repo_name}
+                  branch: ${branch}
               subChartPath: ""
               valuesPaths:
-                - /services/luffy/deployment/luffy-apps/production-values.yaml
+                - ${values_file}
               optionalValuesYaml: false
               skipResourceVersioning: false
               enableDeclarativeRollback: false
               helmVersion: V3
               fetchHelmChartMetadata: false
   gitOpsEnabled: false
-  orgIdentifier: default
-  projectIdentifier: grand_line
+  orgIdentifier: ${org_id}
+  projectIdentifier: ${project_id}

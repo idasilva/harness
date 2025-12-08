@@ -9,6 +9,7 @@ resource "harness_platform_service" "helm_service" {
   yaml = templatefile("${path.module}/templates/tracked-based-${each.value.svc_type}-github/services/devops-helm-services-${each.value.env_key}.yaml", {
     service_name    = each.value.svc_name
     service_id      = each.value.key
+    env_key       = each.value.env_key   
     repo_name       = each.value.repo_name
     folder_path     = each.value.folder_path
     branch          = each.value.branch

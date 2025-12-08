@@ -10,7 +10,7 @@ resource "harness_platform_infrastructure" "k8s_infra" {
   deployment_type = "NativeHelm"
 
   yaml = templatefile("${path.module}/templates/tracked-based-go-github/infrastructure/${each.key}-infrastructure.yaml", {
-    infra_name      = "k8s_${each.key}"
+    infra_name      = "Kubernetes ${each.value.name}"
     infra_id        = "k8s_${each.key}"
     env_ref         = each.key
     namespace       = each.value.namespace

@@ -1,13 +1,13 @@
 infrastructureDefinition:
-  name: k8s_integration
-  identifier: k8s_integration
-  orgIdentifier: default
-  projectIdentifier: grand_line
-  environmentRef: Staging
+  name: ${infra_name}
+  identifier: ${infra_id}
+  orgIdentifier: ${org_id}
+  projectIdentifier: ${project_id}
+  environmentRef: ${env_ref}
   deploymentType: NativeHelm
   type: KubernetesDirect
   spec:
-    connectorRef: k8s_connector
-    namespace: staging
-    releaseName: release-<+INFRA_KEY_SHORT_ID>
+    connectorRef: ${connector_ref}
+    namespace: ${namespace}
+    releaseName: release-<+INFRA_KEY>
   allowSimultaneousDeployments: false

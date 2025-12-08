@@ -1,6 +1,6 @@
 locals {
   environments = {
-    dev = {
+    development = {
       name        = "Development"
       type        = "PreProduction"
       branch      = "develop"
@@ -14,7 +14,7 @@ locals {
     }
     production = {
       name        = "Production"
-      type        = "Production"
+      type        = "PreProduction"
       branch      = "main"
       namespace   = "production"
     }
@@ -27,18 +27,18 @@ locals {
       folder_path = "/services/luffy/deployment/luffy-apps"
       type        = "go"
     }
-    usopp = {
-      name        = "usopp-service"
-      repo_name   = "harness"
-      folder_path = "/services/usopp/deployment/usopp-apps"
-      type        = "java"
-    }
-    nami = {
-      name        = "nami-service"
-      repo_name   = "harness"
-      folder_path = "/services/nami/deployment/nami-apps"
-      type        = "python"
-    }
+    # usopp = {
+    #   name        = "usopp-service"
+    #   repo_name   = "harness"
+    #   folder_path = "/services/usopp/deployment/usopp-apps"
+    #   type        = "java"
+    # }
+    # nami = {
+    #   name        = "nami-service"
+    #   repo_name   = "harness"
+    #   folder_path = "/services/nami/deployment/nami-apps"
+    #   type        = "python"
+    # }
   }
 
   # Create service-environment pairs

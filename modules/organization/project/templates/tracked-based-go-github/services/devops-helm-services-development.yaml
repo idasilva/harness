@@ -1,5 +1,5 @@
 service:
-  name: ${service_name}_${service_id}
+  name: ${service_name}_${env_key}
   identifier: ${service_id}
   serviceDefinition:
     type: NativeHelm
