@@ -31,7 +31,7 @@ trigger:
             - Synchronize
   inputYaml: |
     pipeline:
-      identifier: ci_build_push
+      identifier: ci_build_push_java
       properties:
         ci:
           codebase:

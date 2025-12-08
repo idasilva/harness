@@ -29,7 +29,7 @@ trigger:
             - Close
   inputYaml: |
     pipeline:
-      identifier: cd_deploy
+      identifier: cd_deploy_java
       properties:
         ci:
           codebase:

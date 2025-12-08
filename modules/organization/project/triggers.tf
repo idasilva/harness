@@ -46,14 +46,14 @@ resource "harness_platform_triggers" "pr_trigger_java" {
   org_id     = var.organization_id
   project_id = harness_platform_project.ck_project.id
   name       = "DEVOPS - GITHUB PR TRIGGER JAVA"
-  target_id  = harness_platform_pipeline.ci_pipeline.identifier
+  target_id  = harness_platform_pipeline.ci_pipeline_java.identifier
   
   yaml = templatefile("${path.module}/templates/tracked-based-java-github/triggers/devops-github-pr-trigger.yaml", {
     TRIGGER_NAME        = "DEVOPS - GITHUB PR TRIGGER JAVA"
     TRIGGER_IDENTIFIER  = "devops_github_pr_trigger_java"
     PROJECT_ID          = harness_platform_project.ck_project.id
     ORG_ID              = var.organization_id
-    PIPELINE_ID         = harness_platform_pipeline.ci_pipeline.identifier
+    PIPELINE_ID         = harness_platform_pipeline.ci_pipeline_java.identifier
     GITHUB_CONNECTOR    = "github_main"
     TARGET_BRANCH       = "main"
   })
@@ -66,17 +66,17 @@ resource "harness_platform_triggers" "merge_trigger_java" {
   org_id     = var.organization_id
   project_id = harness_platform_project.ck_project.id
   name       = "DEVOPS - GITHUB MERGE TRIGGER JAVA"
-  target_id  = harness_platform_pipeline.cd_pipeline.identifier
+  target_id  = harness_platform_pipeline.cd_pipeline_java.identifier
   
   yaml = templatefile("${path.module}/templates/tracked-based-java-github/triggers/devops-github-merge-trigger.yaml", {
     TRIGGER_NAME        = "DEVOPS - GITHUB MERGE TRIGGER JAVA"
     TRIGGER_IDENTIFIER  = "devops_github_merge_trigger_java"
     PROJECT_ID          = harness_platform_project.ck_project.id
     ORG_ID              = var.organization_id
-    PIPELINE_ID         = harness_platform_pipeline.cd_pipeline.identifier
+    PIPELINE_ID         = harness_platform_pipeline.cd_pipeline_java.identifier
     GITHUB_CONNECTOR    = "github_main"
     TARGET_BRANCH       = "main"
   })
   
-  depends_on = [harness_platform_pipeline.cd_pipeline]
+  depends_on = [harness_platform_pipeline.cd_pipeline_java]
 }
