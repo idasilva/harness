@@ -20,16 +20,16 @@ trigger:
             - key: targetBranch
               operator: Equals
               value: ${TARGET_BRANCH}
-            - key: changedFiles
-              operator: Contains
-              value: /services/usopp
+            # - key: changedFiles
+            #   operator: Contains
+            #   value: /services/nami
           headerConditions: []
           repoName: harness
           actions:
             - Close
   inputYaml: |
     pipeline:
-      identifier: cd_deploy_java
+      identifier: cd_deploy_python
       properties:
         ci:
           codebase:

@@ -28,17 +28,16 @@ pipeline:
             steps:
               - step:
                   type: Run
-                  name: Run Tests
-                  identifier: pytest
+                  name: Run Tests with Tox
+                  identifier: tox_test
                   spec:
                     connectorRef: dockerhub_main
                     image: python:3.11-slim
                     shell: Sh
                     command: |-
                       cd /harness/services/nami
-                      pip install -r requirements.txt
-                      pip install pytest pytest-cov
-                      pytest --cov=. --cov-report=xml --cov-report=term-missing --junitxml=junit.xml
+                      pip install tox
+                      tox -e py
                     reports:
                       type: JUnit
                       spec:
