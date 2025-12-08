@@ -16,3 +16,30 @@ run:
 
 clean:
 	rm -rf venv
+
+
+.PHONY: test coverage lint clean
+
+test:
+	pytest -v
+
+coverage:
+	pytest --cov=. --cov-report=html --cov-report=term-missing
+
+lint:
+	flake8 .
+	black --check .
+
+format:
+	black .
+
+clean:
+	rm -rf .coverage coverage.xml htmlcov/ .pytest_cache/ .tox/ __pycache__/
+	find . -type d -name __pycache__ -exec rm -rf {} +
+	find . -type f -name "*.pyc" -delete
+
+install:
+	pip install -r requirements.txt
+	pip install pytest pytest-cov flake8 black
+
+all: lint test coverage

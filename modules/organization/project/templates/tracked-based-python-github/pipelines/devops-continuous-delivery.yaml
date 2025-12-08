@@ -10,7 +10,7 @@ pipeline:
         build: <+input>
         repoName: <+input>  
         branch: main
-        path: services/usopp
+        path: services/nami
   stages:
     - stage:
         name: Deploy To Development
@@ -20,7 +20,7 @@ pipeline:
         spec:
           deploymentType: NativeHelm
           service:
-            serviceRef: usopp_development
+            serviceRef: nami_development
           environment:
             environmentRef: development
             deployToAll: false
@@ -101,7 +101,7 @@ pipeline:
                     instance:
                       domain: https://tamekia-uneternized-alease.ngrok-free.dev
                       protocol: https
-                      path: java/v1/version
+                      path: python/v1/version
     - stage:
         name: Approval Gate - Staging
         identifier: Approval_Gate_Staging
@@ -136,7 +136,7 @@ pipeline:
         spec:
           deploymentType: NativeHelm
           service:
-            serviceRef: usopp_staging
+            serviceRef: nami_staging
           environment:
             environmentRef: staging
             deployToAll: false
@@ -213,7 +213,7 @@ pipeline:
         spec:
           deploymentType: NativeHelm
           service:
-            serviceRef: usopp_production
+            serviceRef: nami_production
           environment:
             environmentRef: production
             deployToAll: false

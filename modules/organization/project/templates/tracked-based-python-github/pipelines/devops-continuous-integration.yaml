@@ -10,7 +10,7 @@ pipeline:
         build: <+input>
         repoName: <+input>  
         branch: main
-        path: services/usopp
+        path: services/nami
   stages:
     - stage:
         name: Continuous Integration
@@ -28,42 +28,32 @@ pipeline:
             steps:
               - step:
                   type: Run
-                  name: Run Tests
-                  identifier: Run_Tests
+                  name: Run Tests with Tox
+                  identifier: tox_test
                   spec:
                     connectorRef: dockerhub_main
-                    image: maven:3.9-eclipse-temurin-17
+                    image: python:3.11-slim
                     shell: Sh
                     command: |-
-                      cd /harness/services/usopp
-                      mvn test
+                      cd /harness/services/nami
+                      pip install tox
+                      tox -e py
                     reports:
                       type: JUnit
                       spec:
                         paths:
-                          - /harness/services/usopp/target/surefire-reports/*.xml
-              - step:
-                  type: Run
-                  name: Checkstyle
-                  identifier: Checkstyle
-                  spec:
-                    connectorRef: dockerhub_main
-                    image: maven:3.9-eclipse-temurin-17
-                    shell: Sh
-                    command: |-
-                      cd /harness/services/usopp
-                      mvn checkstyle:check
+                          - /harness/services/nami/junit.xml
               - step:
                   type: BuildAndPushDockerRegistry
                   name: BuildAndPushDockerRegistry_1
                   identifier: BuildAndPushDockerRegistry_1
                   spec:
                     connectorRef: dockerhub_main
-                    repo: idasilva6/usopp
+                    repo: idasilva6/nami
                     tags:
                       - <+pipeline.sequenceId>
-                    dockerfile: services/usopp/Dockerfile
-                    context: services/usopp
+                    dockerfile: services/nami/Dockerfile
+                    context: services/nami
                 contextType: Pipeline
               - step:
                   type: Run
@@ -83,7 +73,7 @@ pipeline:
                       rm -f cosign.key
                     envVariables:
                       COSIGN_PASSWORD: Cosign@4826370
-                      IMAGE_TAG: idasilva6/usopp:<+pipeline.sequenceId>
+                      IMAGE_TAG: idasilva6/nami:<+pipeline.sequenceId>
                 contextType: Pipeline
               - step:
                   type: Gitleaks
@@ -132,4 +122,4 @@ pipeline:
                     image:
                       type: docker_v2
                       tag: <+pipeline.sequenceId>
-                      name: idasilva6/usopp
+                      name: idasilva6/nami
