@@ -18,7 +18,7 @@ variable "account_id" {
 
 variable "projects" {
   description = "List of projects"
-  default     = ["project1"]
+  default     = ["grand_line"]
   type        = list(string)
 }
 
@@ -31,7 +31,7 @@ variable "use_default_org" {
 variable "create_connectors_for_projects" {
   description = "List of projects to create connectors for"
   type        = set(string)
-  default     = ["project1"]
+  default     = ["grand_line"]
 }
 
 variable "github_username" {
@@ -102,6 +102,11 @@ variable "connectors" {
       access_key     = optional(string)
       secret_key_ref = optional(string)
     }))
+    api_authentication = optional(object({
+    token_ref = string
+    }))
+    validation_repo    = optional(string)
+    connection_type    = optional(string)
     delegate_selectors = optional(list(string))
     tags              = optional(map(string))
   }))
@@ -112,12 +117,16 @@ variable "connectors" {
       name        = "GitHub Main"
       identifier  = "github_main"
       description = "Main GitHub connector"
-      url         = "https://github.com/idasilva/luffy-services"
-      connection_type = "Repo"
+      url         = "https://github.com/idasilva"
       credentials = {
         username  = "idasilva"
         token_ref = "github_token"
       }
+      api_authentication =  {
+         token_ref = "github_token"
+      }
+      validation_repo = "harness"
+      connection_type = "Account"
     }
 
     dockerhub_main = {

@@ -3,11 +3,6 @@ variable "project" {
   type        = string
 }
 
-variable "organization_id" {
-  description = "Harness organization ID"
-  type        = string
-}
-
 variable "color" {
   description = "Project color in Harness UI"
   type        = string
@@ -56,4 +51,22 @@ variable "dockerhub_repo" {
   description = "DockerHub repository"
   type        = string
   default     = ""
+}
+
+variable "organization_id" {
+  description = "Harness organization ID"
+  type        = string
+  default     = "default"
+}
+
+variable "github_connector_ref" {
+  description = "GitHub connector reference"
+  type        = string
+  default     = "github_main"
+}
+
+variable "k8s_connector_ref" {
+  description = "Kubernetes connector reference"
+  type        = string
+  default     = "k8s_cluster"
 }

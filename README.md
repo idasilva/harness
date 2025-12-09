@@ -137,3 +137,6 @@ terraform state list | xargs -n1 terraform state rm
 - https://registry.terraform.io/providers/harness/harness/latest/docs
 - https://developer.harness.io/docs/continuous-delivery/gitops/get-started/harness-cd-git-ops-quickstart
 - https://www.youtube.com/watch?v=gpoXT9eoSWg
+- https://github.com/harness/harness-migrate?tab=readme-ov-file
+- https://www.youtube.com/watch?v=OXtfziTRBM0&t=189s
+- https://principaloftech.medium.com/so-kind-of-helm-using-kind-kubernetes-in-docker-helm-for-quick-jenkins-setup-587252d787f6

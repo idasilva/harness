@@ -1,0 +1,91 @@
+replicaCount: 1
+
+image:
+  repository: ~
+  pullPolicy: IfNotPresent
+  tag: ~
+
+args: ~
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: "nginx"
+  hosts:
+    - host: ~
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+   - secretName: usopp-apps-tls
+     hosts:
+       - ~
+
+extraIngress:
+  enabled: false
+  className: "nginx-internal"
+  hosts:
+    - host: ~
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+   - secretName: usopp-apps-tls
+     hosts:
+       - ~
+
+secretsInit:
+  enabled: false
+  image:
+    repository: leocomelli/secrets-init
+    tag: 0.0.6
+  region: us-east-1
+  assumeRole: ~
+  args:
+    - --provider=aws
+    - --data-parser=json
+    - --template=export {{ .ContentKey }}="{{ .ContentValue }}"
+    - --output=/secrets/env
+  secrets:
+    - production/app1
+    - production/aws
+
+persistence:
+  enabled: false
+  storageClass: gp2"
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+  mounts: []
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

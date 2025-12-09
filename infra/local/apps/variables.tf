@@ -15,3 +15,23 @@ variable "kubernetes_version" {
   type        = string
   default     = "v1.32.0"
 }
+
+variable "ngrok_api_key" {
+  description = "ngrok API Key"
+  type        = string
+  default = "36U4gleHGEivpqxNqeXoaAGSHhd_6gaEUwqoS9wnfsX5QCAGH"
+  sensitive   = true
+}
+
+variable "ngrok_authtoken" {
+  description = "ngrok Auth Token"
+  type        = string
+  default = "36JSCOFO7aieRWxwURYwzq3WlOl_7KWuNQZwnT4ejqu7nrxRk"
+  sensitive   = true
+}
+
+variable "default_namespaces" {
+  description = "Default namespaces to create"
+  type        = list(string)
+  default     = ["development", "staging", "production"]
+}
