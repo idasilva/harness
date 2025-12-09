@@ -7,30 +7,36 @@ module "k8s" {
   default_namespaces = var.default_namespaces
 }
 
-module "argocd" {
-  source = "../modules/argocd"
-  argocd_namespace = "argocd"
+module "jenkins" {
+  source = "../modules/jenkins"
 
   depends_on = [ module.k8s ]
 }
 
-module "ngrok" {
-  source = "../modules/ngrok"
+# module "argocd" {
+#   source = "../modules/argocd"
+#   argocd_namespace = "argocd"
 
-  ngrok_api_key   = var.ngrok_api_key
-  ngrok_authtoken = var.ngrok_authtoken
+#   depends_on = [ module.k8s ]
+# }
+
+# module "ngrok" {
+#   source = "../modules/ngrok"
+
+#   ngrok_api_key   = var.ngrok_api_key
+#   ngrok_authtoken = var.ngrok_authtoken
   
-  namespace    = "ngrok-ingress-controller"
-  release_name = "ngrok-operator"
+#   namespace    = "ngrok-ingress-controller"
+#   release_name = "ngrok-operator"
 
-  depends_on = [ module.k8s ]
-}
+#   depends_on = [ module.k8s ]
+# }
 
 
-module "harness_delegate" {
-  source = "../modules/delegate"
+# module "harness_delegate" {
+#   source = "../modules/delegate"
 
-  delegate_name  = "helm-delegate"
-  account_id     = "XPTO"
-  delegate_token = "XPTO"
-}
+#   delegate_name  = "helm-delegate"
+#   account_id     = "XPTO"
+#   delegate_token = "XPTO"
+# }
