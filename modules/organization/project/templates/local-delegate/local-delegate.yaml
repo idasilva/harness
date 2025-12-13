@@ -1,0 +1,68 @@
+pipeline:
+  name: lab
+  identifier: lab
+  projectIdentifier: lab
+  orgIdentifier: default
+  tags: {}
+  stages:
+    - stage:
+        name: Package
+        identifier: Package
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          caching:
+            enabled: true
+            override: true
+          buildIntelligence:
+            enabled: true
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: List All Bucket Available
+                  identifier: Run_1
+                  spec:
+                    connectorRef: account.dockerhub
+                    image: gcr.io/google.com/cloudsdktool/cloud-sdk
+                    shell: Sh
+                    command: aws s3 ls s3://harness-delegatee
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Docker
+            spec:
+              harnessImageConnectorRef: account.dockerhub
+    - stage:
+        name: build
+        identifier: build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          caching:
+            enabled: true
+            override: true
+          buildIntelligence:
+            enabled: true
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: k8s_cluster
+              namespace: development
+              automountServiceAccountToken: true
+              nodeSelector: {}
+              os: Linux
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: List All Pods
+                  identifier: List_All_Pods
+                  spec:
+                    connectorRef: account.dockerhub
+                    image: gcr.io/cloud-builders/kubectl
+                    shell: Sh
+                    command: kubectl get pods -A

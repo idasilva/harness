@@ -33,10 +33,10 @@ module "jenkins" {
 # }
 
 
-# module "harness_delegate" {
-#   source = "../modules/delegate"
+module "harness_delegate" {
+  source = "../modules/delegate"
 
-#   delegate_name  = "helm-delegate"
-#   account_id     = "XPTO"
-#   delegate_token = "XPTO"
-# }
+  delegate_name  = "helm-delegate"
+  account_id     = "9leDao-yRqu7DN66CVDAeg"
+  delegate_token = "NGVmYzQ5MjhjYzVhY2ZlODlkNzcyNzhkM2ZhZTFhMWI="
+}
