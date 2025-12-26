@@ -1,0 +1,27 @@
+inputSet:
+  name: default
+  tags: {}
+  identifier: default
+  orgIdentifier: default
+  projectIdentifier: lab
+  pipeline:
+    identifier: pipelinesecrets
+    stages:
+      - stage:
+          identifier: Build
+          type: CI
+          variables:
+            - name: VARIABLE_ONE
+              type: String
+              value: TRY TO USE INPUTSET 1
+            - name: VARIABLE_TWO
+              type: String
+              value: TRY TO USE INPUTSET 2
+            - name: FEATURE_FLAG_EXECUTION
+              type: String
+              value: ""
+    variables:
+      - name: VARIAVEL_GLOBAL_DA_PIPELINE
+        type: String
+        value: ""
+  isInlineHCEntity: false
