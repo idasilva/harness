@@ -7,6 +7,7 @@ import (
 
 func main() {
 	logger, _ := zap.NewProduction()
+	
 	defer func() { _ = logger.Sync() }()
 	cmd.Execute()
 }
