@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: luffy-services
+  labels:
+    helm.sh/chart: luffy-apps-0.1.0
+    app.kubernetes.io/name: luffy-apps
+    app.kubernetes.io/instance: luffy-app
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
