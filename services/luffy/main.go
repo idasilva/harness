@@ -9,6 +9,6 @@ func main() {
 	logger, _ := zap.NewProduction()
 
 	defer func() { _ = logger.Sync() }()
-	logger.Info("Starting Luffy Service...")
+	logger.Info("Starting Luffy Service")
 	cmd.Execute()
 }
