@@ -75,12 +75,6 @@ spec:
               protocol: TCP
           resources:
             {}
-  strategy:
-    canary:
-      steps:
-        - setWeight: 50
-        - pause: {}
-        - setWeight: 100
 ---
 # Source: luffy-apps/templates/tests/test-connection.yaml
 apiVersion: v1
