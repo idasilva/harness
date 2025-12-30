@@ -36,8 +36,8 @@ spec:
     app.kubernetes.io/instance: luffy-app
 ---
 # Source: luffy-apps/templates/rollouts.yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Rollout
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: luffy-services
   labels:
