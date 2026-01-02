@@ -2,11 +2,9 @@ fullnameOverride: luffy-services
 replicaCount: 2
 image:
   repository: 560978416398.dkr.ecr.us-east-1.amazonaws.com/luffy-services
-  tag: v5.0.0
-
+  tag: v9.0.0
 imagePullSecrets:
   - name: regcred
-
 service:
   type: ClusterIP
   port: 80
