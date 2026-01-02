@@ -1,8 +1,8 @@
 pipeline:
-  name: DEVOPS - CONTINUOUS INTEGRATION GOLANG
-  identifier: ci_build_push
-  projectIdentifier: grand_line
-  orgIdentifier: default
+  name: ${PIPELINE_NAME}
+  identifier: ${PIPELINE_IDENTIFIER}
+  projectIdentifier: ${PROJECT_ID_PLACEHOLDER}
+  orgIdentifier: ${ORG_ID_PLACEHOLDER}
   properties:
     ci:
       codebase:

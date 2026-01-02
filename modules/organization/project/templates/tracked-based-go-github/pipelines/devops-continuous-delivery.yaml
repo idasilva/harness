@@ -1,8 +1,8 @@
 pipeline:
-  name: DEVOPS - CONTINUOUS DELIVERY GOLANG
-  identifier: cd_deploy
-  projectIdentifier: grand_line
-  orgIdentifier: default
+  name: ${PIPELINE_NAME}
+  identifier: ${PIPELINE_IDENTIFIER}
+  projectIdentifier: ${PROJECT_ID_PLACEHOLDER}
+  orgIdentifier: ${ORG_ID_PLACEHOLDER}
   stages:
     - stage:
         name: Deploy To Development
