@@ -1,8 +1,8 @@
 fullnameOverride: luffy-services
-replicaCount: 2
+replicaCount: 4
 image:
   repository: 560978416398.dkr.ecr.us-east-1.amazonaws.com/luffy-services
-  tag: v9.0.0
+  tag: v10.0.0
 imagePullSecrets:
   - name: regcred
 service:
