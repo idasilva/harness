@@ -279,28 +279,63 @@ pipeline:
                   identifier: canaryDeployment
                   steps:
                     - step:
-                        name: Canary Deployment
-                        identifier: canaryDeployment
+                        name: Canary Deployment -  25
+                        identifier: Canary_Deployment_25
                         type: K8sCanaryDeploy
                         timeout: 10m
                         spec:
                           instanceSelection:
-                            type: Count
                             spec:
-                              count: 1
-                          skipDryRun: true
+                              percentage: 25
+                            type: Percentage
+                          skipDryRun: false
                           delegateSelectors:
                             - helm-delegate
                     - step:
-                        name: Canary Delete
-                        identifier: canaryDelete
-                        type: K8sCanaryDelete
+                        type: HarnessApproval
+                        name: Deploy Approval
+                        identifier: Deploy_Approval
+                        spec:
+                          approvalMessage: Please review the following information and approve the pipeline progression
+                          includePipelineExecutionHistory: true
+                          isAutoRejectEnabled: false
+                          approvers:
+                            userGroups:
+                              - account._account_all_users
+                            minimumCount: 1
+                            disallowPipelineExecutor: false
+                          approverInputs: []
+                        timeout: 1d
+                    - step:
+                        type: K8sCanaryDeploy
+                        name: Canary Deployment - 50
+                        identifier: Canary_Deployment_50
+                        spec:
+                          skipDryRun: false
+                          instanceSelection:
+                            spec:
+                              percentage: 50
+                            type: Percentage
                         timeout: 10m
-                        spec: {}
               - stepGroup:
                   name: Primary Deployment
                   identifier: primaryDeployment
                   steps:
+                    - step:
+                        type: HarnessApproval
+                        name: Should Rollout
+                        identifier: Should_Rollout
+                        spec:
+                          approvalMessage: Please review the following information and approve the pipeline progression
+                          includePipelineExecutionHistory: true
+                          isAutoRejectEnabled: false
+                          approvers:
+                            userGroups:
+                              - account._account_all_users
+                            minimumCount: 1
+                            disallowPipelineExecutor: false
+                          approverInputs: []
+                        timeout: 1d
                     - step:
                         name: Rolling Deployment
                         identifier: rollingDeployment
@@ -308,6 +343,31 @@ pipeline:
                         timeout: 10m
                         spec:
                           skipDryRun: false
+              - stepGroup:
+                  name: Canary Group Delete
+                  identifier: Canary_Group_Delete
+                  steps:
+                    - step:
+                        type: HarnessApproval
+                        name: Freeze
+                        identifier: Freeze
+                        spec:
+                          approvalMessage: Please review the following information and approve the pipeline progression
+                          includePipelineExecutionHistory: true
+                          isAutoRejectEnabled: false
+                          approvers:
+                            userGroups:
+                              - account._account_all_users
+                            minimumCount: 1
+                            disallowPipelineExecutor: false
+                          approverInputs: []
+                        timeout: 1d
+                    - step:
+                        name: Canary Delete
+                        identifier: canaryDelete
+                        type: K8sCanaryDelete
+                        timeout: 10m
+                        spec: {}
             rollbackSteps:
               - step:
                   name: Canary Delete
@@ -331,6 +391,55 @@ pipeline:
         when:
           pipelineStatus: Success
           condition: <+pipeline.variables.DEPLOYMENT_STRATEGY> == "canary"
+    - stage:
+        name: Deploy to Production - Blue Green
+        identifier: Deploy_to_Production_Blue_Green
+        description: ""
+        type: Deployment
+        spec:
+          deploymentType: Kubernetes
+          service:
+            serviceRef: k8s_manifests_yaml
+          environment:
+            environmentRef: production
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: k8s_infra_manifest
+          execution:
+            steps:
+              - step:
+                  name: Stage Deployment
+                  identifier: stageDeployment
+                  type: K8sBlueGreenDeploy
+                  timeout: 10m
+                  spec:
+                    skipDryRun: false
+                    pruningEnabled: false
+              - step:
+                  name: Swap primary with stage service
+                  identifier: bgSwapServices
+                  type: K8sBGSwapServices
+                  timeout: 10m
+                  spec:
+                    skipDryRun: false
+            rollbackSteps:
+              - step:
+                  name: Swap primary with stage service
+                  identifier: rollbackBgSwapServices
+                  type: K8sBGSwapServices
+                  timeout: 10m
+                  spec:
+                    skipDryRun: false
+        tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: StageRollback
+        when:
+          pipelineStatus: Success
+          condition: <+pipeline.variables.DEPLOYMENT_STRATEGY> == "bluegreen"
   variables:
     - name: FEATURE_FLAG_EXECUTION
       type: String
