@@ -29,7 +29,7 @@ spec:
         - name: luffy-apps
           securityContext:
             {}
-          image: "560978416398.dkr.ecr.us-east-1.amazonaws.com/luffy-services:v8.0.0"
+          image: "560978416398.dkr.ecr.us-east-1.amazonaws.com/luffy-services:v9.0.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
