@@ -3,14 +3,6 @@ pipeline:
   identifier: ${PIPELINE_IDENTIFIER}
   projectIdentifier: ${PROJECT_ID_PLACEHOLDER}
   orgIdentifier: ${ORG_ID_PLACEHOLDER}
-  properties:
-    ci:
-      codebase:
-        connectorRef: github_main
-        build: <+input>
-        repoName: <+input>  
-        branch: main
-        path: services/luffy
   stages:
     - stage:
         name: Deploy To Development
@@ -102,6 +94,12 @@ pipeline:
                       domain: https://tamekia-uneternized-alease.ngrok-free.dev
                       protocol: https
                       path: v1/version
+                  when:
+                    stageStatus: Success
+                    condition: <+pipeline.variables.FEATURE_FLAG_EXECUTION> != "0"
+        when:
+          pipelineStatus: Success
+          condition: <+pipeline.variables.FEATURE_FLAG_EXECUTION> != "0"
     - stage:
         name: Approval Gate - Staging
         identifier: Approval_Gate_Staging
@@ -236,12 +234,13 @@ pipeline:
                     outputVariables: []
                   timeout: 10m
               - step:
-                  name: Helm Deployment
-                  identifier: helmDeployment
                   type: HelmDeploy
-                  timeout: 10m
+                  name: Helm Deployment
+                  identifier: Helm_Deployment
                   spec:
                     skipDryRun: false
+                    ignoreReleaseHistFailStatus: false
+                  timeout: 10m
             rollbackSteps:
               - step:
                   name: Helm Rollback
@@ -256,3 +255,90 @@ pipeline:
                 - AllErrors
               action:
                 type: StageRollback
+        when:
+          pipelineStatus: Success
+          condition: <+pipeline.variables.DEPLOYMENT_STRATEGY> == "rolling"
+    - stage:
+        name: Deploy to Production - Canary
+        identifier: Deploy_to_Production_Canary
+        description: ""
+        type: Deployment
+        spec:
+          deploymentType: Kubernetes
+          service:
+            serviceRef: k8s_manifests_yaml
+          environment:
+            environmentRef: production
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: k8s_infra_manifest
+          execution:
+            steps:
+              - stepGroup:
+                  name: Canary Deployment
+                  identifier: canaryDeployment
+                  steps:
+                    - step:
+                        name: Canary Deployment
+                        identifier: canaryDeployment
+                        type: K8sCanaryDeploy
+                        timeout: 10m
+                        spec:
+                          instanceSelection:
+                            type: Count
+                            spec:
+                              count: 1
+                          skipDryRun: true
+                          delegateSelectors:
+                            - helm-delegate
+                    - step:
+                        name: Canary Delete
+                        identifier: canaryDelete
+                        type: K8sCanaryDelete
+                        timeout: 10m
+                        spec: {}
+              - stepGroup:
+                  name: Primary Deployment
+                  identifier: primaryDeployment
+                  steps:
+                    - step:
+                        name: Rolling Deployment
+                        identifier: rollingDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+            rollbackSteps:
+              - step:
+                  name: Canary Delete
+                  identifier: rollbackCanaryDelete
+                  type: K8sCanaryDelete
+                  timeout: 10m
+                  spec: {}
+              - step:
+                  name: Rolling Rollback
+                  identifier: rollingRollback
+                  type: K8sRollingRollback
+                  timeout: 10m
+                  spec: {}
+        tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: StageRollback
+        when:
+          pipelineStatus: Success
+          condition: <+pipeline.variables.DEPLOYMENT_STRATEGY> == "canary"
+  variables:
+    - name: FEATURE_FLAG_EXECUTION
+      type: String
+      description: ""
+      required: false
+      value: "0"
+    - name: DEPLOYMENT_STRATEGY
+      type: String
+      description: ""
+      required: true
+      value: canary

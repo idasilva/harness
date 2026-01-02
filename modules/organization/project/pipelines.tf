@@ -8,7 +8,8 @@ resource "harness_platform_pipeline" "ci_pipeline" {
     PROJECT_ID_PLACEHOLDER = var.project,
     ORG_ID_PLACEHOLDER     = var.organization_id,
     PIPELINE_NAME          = "DEVOPS - CONTINUOUS INTEGRATION GOLANG"
-    PIPELINE_IDENTIFIER    = "ci_build_push"
+    PIPELINE_IDENTIFIER    = "ci_build_push",
+    DOCKERHUB_TOKEN =   ""
   })
   depends_on = [ harness_platform_project.ck_project ]
 }
