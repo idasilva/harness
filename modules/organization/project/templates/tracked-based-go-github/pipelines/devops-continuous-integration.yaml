@@ -1,14 +1,14 @@
 pipeline:
-  name: ${PIPELINE_NAME}
-  identifier: ${PIPELINE_IDENTIFIER}
-  projectIdentifier: ${PROJECT_ID_PLACEHOLDER}
-  orgIdentifier: ${ORG_ID_PLACEHOLDER}
+  name: DEVOPS - CONTINUOUS INTEGRATION GOLANG
+  identifier: ci_build_push
+  projectIdentifier: grand_line
+  orgIdentifier: default
   properties:
     ci:
       codebase:
         connectorRef: github_main
         build: <+input>
-        repoName: <+input>  
+        repoName: <+input>
         branch: main
         path: services/luffy
   stages:
@@ -26,38 +26,6 @@ pipeline:
             spec: {}
           execution:
             steps:
-              - step:
-                  type: BuildAndPushDockerRegistry
-                  name: BuildAndPushDockerRegistry_1
-                  identifier: BuildAndPushDockerRegistry_1
-                  spec:
-                    connectorRef: dockerhub_main
-                    repo: idasilva6/luffy
-                    tags:
-                      - <+pipeline.sequenceId>
-                    dockerfile: services/luffy/Dockerfile
-                    context: services/luffy
-                contextType: Pipeline
-              - step:
-                  type: Run
-                  name: Artifact Signing - Cosign Go Image
-                  identifier: Artifact_Signing_Cosign_Go_Image
-                  spec:
-                    connectorRef: dockerhub_main
-                    image: bitnami/cosign:latest
-                    shell: Bash
-                    command: |-
-                      set -e
-
-                      echo '<+secrets.getValue("cosign_private_ket_file")>' > cosign.key
-                      export COSIGN_PASSWORD='Cosign@4826370'
-
-                      cosign sign --key cosign.key --registry-username idasilva6 --registry-password dckr_pat_KXquQaMsEkXCGTh_IZJY0Ws-TpA --yes $IMAGE_TAG
-                      rm -f cosign.key
-                    envVariables:
-                      COSIGN_PASSWORD: Cosign@4826370
-                      IMAGE_TAG: idasilva6/luffy:<+pipeline.sequenceId>
-                contextType: Pipeline
               - parallel:
                   - step:
                       type: Run
@@ -100,6 +68,23 @@ pipeline:
                           log:
                             level: info
                           fail_on_severity: critical
+                  - step:
+                      type: Snyk
+                      name: Snyk
+                      identifier: Snyk_1
+                      spec:
+                        mode: orchestration
+                        config: code
+                        target:
+                          type: repository
+                          workspace: /harness/services/luffy
+                          detection: auto
+                        advanced:
+                          log:
+                            level: info
+                        privileged: true
+                        auth:
+                          access_token: a524b527-79df-4630-a57f-7955ef67bab7
               - step:
                   type: Owasp
                   name: OWASP Dependency-Check
@@ -155,6 +140,38 @@ pipeline:
                       spec:
                         paths:
                           - /harness/services/luffy/report.xml
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: BuildAndPushDockerRegistry_1
+                  identifier: BuildAndPushDockerRegistry_1
+                  spec:
+                    connectorRef: dockerhub_main
+                    repo: idasilva6/luffy
+                    tags:
+                      - <+pipeline.sequenceId>
+                    dockerfile: services/luffy/Dockerfile
+                    context: services/luffy
+                contextType: Pipeline
+              - step:
+                  type: Run
+                  name: Artifact Signing - Cosign Go Image
+                  identifier: Artifact_Signing_Cosign_Go_Image
+                  spec:
+                    connectorRef: dockerhub_main
+                    image: bitnami/cosign:latest
+                    shell: Bash
+                    command: |-
+                      set -e
+
+                      echo '<+secrets.getValue("cosign_private_ket_file")>' > cosign.key
+                      export COSIGN_PASSWORD='Cosign@4826370'
+
+                      cosign sign --key cosign.key --registry-username idasilva6 --registry-password dckr_pat_4GrAGWm1MmSkNGMMVMYFTIYPvzs --yes $IMAGE_TAG
+                      rm -f cosign.key
+                    envVariables:
+                      COSIGN_PASSWORD: Cosign@4826370
+                      IMAGE_TAG: idasilva6/luffy:<+pipeline.sequenceId>
+                contextType: Pipeline
               - step:
                   type: AquaTrivy
                   name: AquaTrivy_1
