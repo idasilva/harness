@@ -1,0 +1,19 @@
+version: "1"
+instances:
+  - name: ubuntu-ci-pool
+    default: true
+    type: amazon
+    pool: 2
+    limit: 4
+    platform:
+      os: linux
+      arch: amd64
+    spec:
+      account:
+        region: us-east-2
+        availability_zone: us-east-2c
+      ami: ami-0f5fcdfbd140e4ab7
+      size: t2.nano
+      network:
+        security_groups:
+          - sg-051a8324123c7e24e

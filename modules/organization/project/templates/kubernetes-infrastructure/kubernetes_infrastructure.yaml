@@ -1,0 +1,110 @@
+pipeline:
+  name: build_infra
+  identifier: build_infra
+  projectIdentifier: grand_line
+  orgIdentifier: default
+  tags: {}
+  stages:
+    - stage:
+        name: Build Test and Push - Part 1
+        identifier: Build_Test_and_Push_Part_1
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+            paths: []
+          buildIntelligence:
+            enabled: true
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: k8s_cluster
+              namespace: harness-delegate-ng
+              automountServiceAccountToken: true
+              nodeSelector: {}
+              os: Linux
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Run Unit Tests
+                  identifier: Run_Unit_Tests
+                  spec:
+                    connectorRef: dockerhub_main
+                    image: golang:1.24
+                    shell: Sh
+                    command: |-
+                      go get gotest.tools/gotestsum
+                      gotestsum --format=standard-verbose --junitfile unit-tests.xml || true
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - "*.xml"
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: Build and Push to Docker
+                  identifier: Build_and_Push_to_Docker
+                  spec:
+                    connectorRef: dockerhub_main
+                    repo: idasilva6/gohello
+                    tags:
+                      - <+pipeline.sequenceId>
+    - stage:
+        name: Run integration test
+        identifier: Run_integration_test
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          caching:
+            enabled: true
+            override: true
+          buildIntelligence:
+            enabled: true
+          infrastructure:
+            useFromStage: Build_Test_and_Push_Part_1
+          execution:
+            steps:
+              - stepGroup:
+                  name: Background Validation
+                  identifier: Background_Validation
+                  steps:
+                    - step:
+                        type: Background
+                        name: Expose the Application
+                        identifier: Expose_the_Application
+                        spec:
+                          connectorRef: dockerhub_main
+                          image: idasilva6/gohello:<+pipeline.sequenceId>
+                          shell: Sh
+                          privileged: true
+                    - step:
+                        type: Run
+                        name: Test server connection
+                        identifier: Test_server_connection
+                        spec:
+                          connectorRef: dockerhub_main
+                          image: curlimages/curl:7.73.0
+                          shell: Sh
+                          command: |-
+                            sleep 15
+                            # Try localhost first
+                            curl -v http://localhost:8080 || true
+
+                            # Also try 127.0.0.1
+                            curl -v http://127.0.0.1:8080 || true
+
+                            # Test with a query parameter (fix your URL syntax)
+                            curl -v "http://localhost:8080/?message=Hello_I_am_a_nice_demo"
+                          privileged: true
+                      contextType: Pipeline
+  properties:
+    ci:
+      codebase:
+        connectorRef: github_main
+        repoName: goHelloWorldServer
+        build: <+input>
