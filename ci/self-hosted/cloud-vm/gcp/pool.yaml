@@ -1,0 +1,23 @@
+version: "1"
+instances:
+  - name: ubuntu-gcp
+    default: true
+    type: google
+    pool: 1
+    limit: 1
+    platform:
+      os: linux
+      arch: amd64
+    spec:
+      account:
+        project_id: harness-project-483820
+        json_path: /runner/application_default_credentials.json
+      image: projects/ubuntu-os-cloud/global/images/ubuntu-2204-jammy-v20250701
+      machine_type: e2-small
+      zone:
+        - southamerica-east1-c
+      network: projects/harness-project-483820/global/networks/default
+      disk:
+        size: 100
+        type: "pd-balanced"
+      private_ip: true
