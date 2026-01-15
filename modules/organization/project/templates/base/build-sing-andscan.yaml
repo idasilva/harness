@@ -1,0 +1,71 @@
+template:
+  name: Build Sign Scan
+  identifier: Build_Sign_Scan
+  versionLabel: v1.0.0
+  type: StepGroup
+  projectIdentifier: grand_line
+  orgIdentifier: default
+  tags: {}
+  spec:
+    stageType: CI
+    steps:
+      - step:
+          type: BuildAndPushDockerRegistry
+          name: BuildAndPushDockerRegistry_1
+          identifier: BuildAndPushDockerRegistry_1
+          spec:
+            connectorRef: dockerhub_main
+            repo: <+stepGroup.variables.DOCKER_REPOSITORY>
+            tags:
+              - <+pipeline.sequenceId>
+            dockerfile: <+stepGroup.variables.WORKSPACE>/Dockerfile
+            context: <+stepGroup.variables.WORKSPACE>
+      - step:
+          type: Run
+          name: Artifact Signing - Cosign Go Image
+          identifier: Artifact_Signing_Cosign_Go_Image
+          spec:
+            connectorRef: dockerhub_main
+            image: bitnami/cosign:latest
+            shell: Bash
+            command: |-
+              set -e
+
+              echo '<+secrets.getValue("cosign_private_ket_file")>' > cosign.key
+              export COSIGN_PASSWORD='Cosign@4826370'
+
+              cosign sign --key cosign.key --registry-username idasilva6 --registry-password dckr_pat_4GrAGWm1MmSkNGMMVMYFTIYPvzs --yes $IMAGE_TAG
+              rm -f cosign.key
+            envVariables:
+              COSIGN_PASSWORD: Cosign@4826370
+              IMAGE_TAG: idasilva6/luffy:<+pipeline.sequenceId>
+        contextType: Pipeline
+      - step:
+          type: AquaTrivy
+          name: AquaTrivy_1
+          identifier: AquaTrivy_1
+          spec:
+            mode: orchestration
+            config: default
+            target:
+              type: container
+              detection: auto
+            advanced:
+              log:
+                level: info
+            privileged: true
+            image:
+              type: docker_v2
+              tag: <+pipeline.sequenceId>
+              name: <+stepGroup.variables.DOCKER_REPOSITORY>
+    variables:
+      - name: WORKSPACE
+        type: String
+        value: <+input>
+        description: ""
+        required: true
+      - name: DOCKER_REPOSITORY
+        type: String
+        value: <+input>
+        description: ""
+        required: false

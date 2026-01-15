@@ -1,0 +1,69 @@
+template:
+  name: Code Security
+  identifier: Code_Security
+  versionLabel: v1.0.0
+  type: StepGroup
+  projectIdentifier: grand_line
+  orgIdentifier: default
+  tags: {}
+  spec:
+    stageType: CI
+    steps:
+      - parallel:
+          - step:
+              type: Gitleaks
+              name: Gitleaks
+              identifier: Gitleaks
+              spec:
+                mode: orchestration
+                config: default
+                target:
+                  type: repository
+                  workspace: <+stepGroup.variables.WORKSPACE>
+                  detection: auto
+                advanced:
+                  log:
+                    level: info
+                  fail_on_severity: high
+          - step:
+              type: Snyk
+              name: Snyk
+              identifier: Snyk_1
+              spec:
+                mode: orchestration
+                config: code
+                target:
+                  type: repository
+                  workspace: <+stepGroup.variables.WORKSPACE>
+                  detection: auto
+                advanced:
+                  log:
+                    level: info
+                  fail_on_severity: high
+                privileged: true
+                auth:
+                  access_token: <+secrets.getValue("org.snyk_secret_from_secret_manager")>
+              description: This is a security Scanner.
+          - step:
+              type: Owasp
+              name: OWASP Dependency-Check
+              identifier: Owasp
+              spec:
+                mode: orchestration
+                config: default
+                target:
+                  type: repository
+                  workspace: <+stepGroup.variables.WORKSPACE>
+                  detection: auto
+                advanced:
+                  log:
+                    level: info
+                  fail_on_severity: critical
+                  args:
+                    cli: "--disableOssIndex"
+    variables:
+      - name: WORKSPACE
+        type: String
+        value: <+input>
+        description: ""
+        required: true
