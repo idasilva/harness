@@ -14,9 +14,5 @@ func main() {
 	
 	hash := md5.Sum([]byte("luffy-service-id"))
 	serviceID := hex.EncodeToString(hash[:])
-	
-	logger.Info("Starting Luffy Service...", 
-		zap.String("service_id", serviceID))
-	
 	cmd.Execute()
 }
