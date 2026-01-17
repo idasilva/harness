@@ -1,0 +1,59 @@
+pipeline:
+  name: DEVOPS - CONTINUOUS INTEGRATION FOR ALL CONTAINERS APPLICATION BASED ON TEMPLATE
+  identifier: DEVOPS_CONTINUOUS_INTEGRATION_TEMPLATE
+  projectIdentifier: grand_line
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: github_main
+        repoName: harness
+        build: <+input>
+  stages:
+    - stage:
+        name: Build and Package
+        identifier: Build_and_Package
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+          buildIntelligence:
+            enabled: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - stepGroup:
+                  name: Code Security
+                  identifier: Code_Security
+                  template:
+                    templateRef: Code_Security
+                    versionLabel: v1.0.0
+                    gitBranch: main
+                    templateInputs:
+                      variables:
+                        - name: WORKSPACE
+                          type: String
+                          value: <+input>
+              - stepGroup:
+                  name: Build Sing and Scan
+                  identifier: Build_Sing_and_Scan
+                  template:
+                    templateRef: Build_Sign_Scan
+                    versionLabel: v1.0.0
+                    templateInputs:
+                      variables:
+                        - name: WORKSPACE
+                          type: String
+                          value: <+input>
+                        - name: DOCKER_REPOSITORY
+                          type: String
+                          value: <+input>
