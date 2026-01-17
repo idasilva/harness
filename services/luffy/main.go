@@ -7,7 +7,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// this is the main funcion
 func main() {
 	logger, _ := zap.NewProduction()
 
