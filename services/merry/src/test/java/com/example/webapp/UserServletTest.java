@@ -47,7 +47,7 @@ public final class UserServletTest {
     @Test
     public void testDoGetWithValidUserId() throws Exception {
         when(request.getParameter("id")).thenReturn("123");
-        
+
         servlet.doGet(request, response);
         writer.flush();
 
@@ -64,14 +64,14 @@ public final class UserServletTest {
     @Test
     public void testDoGetWithoutUserId() throws Exception {
         when(request.getParameter("id")).thenReturn(null);
-        
+
         servlet.doGet(request, response);
         writer.flush();
 
         final String result = stringWriter.toString();
         assertEquals("{\"error\":\"User ID is required\"}", result);
         verify(response)
-            .setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                .setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     /**
@@ -82,14 +82,14 @@ public final class UserServletTest {
     @Test
     public void testDoGetWithEmptyUserId() throws Exception {
         when(request.getParameter("id")).thenReturn("");
-        
+
         servlet.doGet(request, response);
         writer.flush();
 
         final String result = stringWriter.toString();
         assertEquals("{\"error\":\"User ID is required\"}", result);
         verify(response)
-            .setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                .setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     /**
@@ -104,7 +104,7 @@ public final class UserServletTest {
 
         final String result = stringWriter.toString();
         assertEquals("{\"message\":\"User created successfully\"}",
-            result);
+                result);
         verify(response).setStatus(HttpServletResponse.SC_CREATED);
         verify(response).setContentType("application/json");
     }

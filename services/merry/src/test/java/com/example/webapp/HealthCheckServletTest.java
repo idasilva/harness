@@ -50,7 +50,7 @@ public final class HealthCheckServletTest {
 
         final String result = stringWriter.toString();
         assertEquals("{\"status\":\"healthy\",\"service\":\"merry\"}",
-            result);
+                result);
         verify(response).setStatus(HttpServletResponse.SC_OK);
         verify(response).setContentType("application/json");
     }

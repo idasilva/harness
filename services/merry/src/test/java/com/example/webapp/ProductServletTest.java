@@ -46,13 +46,13 @@ public final class ProductServletTest {
     @Test
     public void testDoGetWithoutCategory() throws Exception {
         when(request.getParameter("category")).thenReturn(null);
-        
+
         servlet.doGet(request, response);
         writer.flush();
 
         final String result = stringWriter.toString();
         assertEquals("{\"products\":[\"Product1\",\"Product2\"]}",
-            result);
+                result);
         verify(response).setContentType("application/json");
     }
 
@@ -64,14 +64,14 @@ public final class ProductServletTest {
     @Test
     public void testDoGetWithCategory() throws Exception {
         when(request.getParameter("category"))
-            .thenReturn("electronics");
-        
+                .thenReturn("electronics");
+
         servlet.doGet(request, response);
         writer.flush();
 
         final String result = stringWriter.toString();
         assertEquals("{\"category\":\"electronics\",\"products\":[]}",
-            result);
+                result);
         verify(response).setContentType("application/json");
     }
 
@@ -83,11 +83,11 @@ public final class ProductServletTest {
     @Test
     public void testDoDeleteWithValidId() throws Exception {
         when(request.getParameter("id")).thenReturn("456");
-        
+
         servlet.doDelete(request, response);
-        
+
         verify(response)
-            .setStatus(HttpServletResponse.SC_NO_CONTENT);
+                .setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
     /**
@@ -98,14 +98,14 @@ public final class ProductServletTest {
     @Test
     public void testDoDeleteWithoutId() throws Exception {
         when(request.getParameter("id")).thenReturn(null);
-        
+
         servlet.doDelete(request, response);
         writer.flush();
 
         final String result = stringWriter.toString();
         assertEquals("{\"error\":\"Product ID is required\"}", result);
         verify(response)
-            .setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                .setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     /**
@@ -116,13 +116,13 @@ public final class ProductServletTest {
     @Test
     public void testDoDeleteWithEmptyId() throws Exception {
         when(request.getParameter("id")).thenReturn("");
-        
+
         servlet.doDelete(request, response);
         writer.flush();
 
         final String result = stringWriter.toString();
         assertEquals("{\"error\":\"Product ID is required\"}", result);
         verify(response)
-            .setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                .setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 }
