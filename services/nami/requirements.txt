@@ -1,2 +1,5 @@
-fastapi==0.109.0
+fastapi==0.115.12
 uvicorn==0.27.0
+flake8==5.0.4
+mypy==0.971
+pytest==7.2.0
