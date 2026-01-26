@@ -8,6 +8,6 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/python/v1/version")
+@app.get("/python/v2/version")
 async def version():
-    return {"version": "v1.0.0"}
+    return {"version": "v2.0.0"}
