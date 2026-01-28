@@ -28,7 +28,7 @@ func handlerAppVersion(c *gin.Context) {
 
 	log.WithFields(log.Fields{
 		"apiName": "version",
-	}).Info("version api was called...dddddd")
+	}).Info("version api was called...dddddd333333")
 
 	c.JSON(http.StatusOK, "version: 3/.....")
 }
