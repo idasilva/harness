@@ -317,6 +317,20 @@ pipeline:
                               percentage: 50
                             type: Percentage
                         timeout: 10m
+                    - step:
+                        type: Http
+                        name: Check Reachability
+                        identifier: Check_Reachability
+                        spec:
+                          url: https://tamekia-uneternized-alease.ngrok-free.dev/v1/version
+                          method: GET
+                          headers: []
+                          inputVariables: []
+                          outputVariables: []
+                        timeout: 10s
+                        strategy:
+                          repeat:
+                            times: 5
               - stepGroup:
                   name: Primary Deployment
                   identifier: primaryDeployment
@@ -368,6 +382,21 @@ pipeline:
                         type: K8sCanaryDelete
                         timeout: 10m
                         spec: {}
+                    - step:
+                        type: Http
+                        name: "Check "
+                        identifier: Check
+                        spec:
+                          url: https://tamekia-uneternized-alease.ngrok-free.dev/v1/version
+                          method: GET
+                          headers: []
+                          inputVariables: []
+                          outputVariables: []
+                          requestBody: ""
+                        timeout: 10s
+                        strategy:
+                          repeat:
+                            times: 5
             rollbackSteps:
               - step:
                   name: Canary Delete

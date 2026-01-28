@@ -30,5 +30,5 @@ func handlerAppVersion(c *gin.Context) {
 		"apiName": "version",
 	}).Info("version api was called...")
 
-	c.JSON(http.StatusOK, "version: 3")
+	c.JSON(http.StatusOK, "version: 3/.....")
 }

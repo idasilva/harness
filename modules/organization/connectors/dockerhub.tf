@@ -7,7 +7,7 @@ resource "harness_platform_connector_docker" "this" {
   org_id      = var.organization_id
   project_id  = var.project_id
   type        = "Other"
-  url         = coalesce(each.value.url, "https://index.docker.io/v2/")
+  url         = coalesce(each.value.url, "https://index.docker.io/v1/")
 
   credentials {
     username     = each.value.credentials.username
