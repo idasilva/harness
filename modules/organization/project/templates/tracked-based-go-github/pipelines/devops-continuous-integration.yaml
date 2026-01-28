@@ -28,33 +28,6 @@ pipeline:
             steps:
               - parallel:
                   - step:
-                      type: Run
-                      name: Golang Lint
-                      identifier: Golang_Lint
-                      spec:
-                        connectorRef: dockerhub_main
-                        image: golangci/golangci-lint:v1.61-alpine
-                        shell: Sh
-                        command: |-
-                          set -e
-                          cd  /harness/services/luffy
-
-                          golangci-lint run \
-                              --timeout=5m \
-                              --out-format=checkstyle \
-                              --issues-exit-code=0 \
-                              ./... > lint-report.xml || true
-
-                          golangci-lint run \
-                              --timeout=5m \
-                              --out-format=colored-line-number \
-                              ./...
-                        reports:
-                          type: JUnit
-                          spec:
-                            paths:
-                              - /harness/services/luffy/lint-report.xml
-                  - step:
                       type: Gitleaks
                       name: Gitleaks
                       identifier: Gitleaks
@@ -82,25 +55,27 @@ pipeline:
                         advanced:
                           log:
                             level: info
+                          fail_on_severity: none
                         privileged: true
                         auth:
                           access_token: a524b527-79df-4630-a57f-7955ef67bab7
-              - step:
-                  type: Owasp
-                  name: OWASP Dependency-Check
-                  identifier: Owasp
-                  spec:
-                    mode: orchestration
-                    config: default
-                    target:
-                      type: repository
-                      detection: auto
-                    advanced:
-                      log:
-                        level: info
-                      fail_on_severity: critical
-                      args:
-                        cli: "--disableOssIndex"
+                      description: This is a security Scanner.
+                  - step:
+                      type: Owasp
+                      name: OWASP Dependency-Check
+                      identifier: Owasp
+                      spec:
+                        mode: orchestration
+                        config: default
+                        target:
+                          type: repository
+                          detection: auto
+                        advanced:
+                          log:
+                            level: info
+                          fail_on_severity: critical
+                          args:
+                            cli: "--disableOssIndex"
               - step:
                   type: Run
                   identifier: installgo
@@ -116,30 +91,59 @@ pipeline:
                       export GOPATH=/root/go
                       export PATH=$GOPATH/bin:$PATH
                       go install github.com/jstemmer/go-junit-report/v2@latest
-              - step:
-                  type: Run
-                  identifier: test
-                  name: Test
-                  spec:
-                    connectorRef: dockerhub_main
-                    image: golang:1.23-alpine
-                    shell: Sh
-                    workingDirectory: /harness/services/luffy
-                    command: |-
-                      set -e
-                      cd  /harness/services/luffy
-                      export GOPATH=/root/go
-                      export PATH=$GOPATH/bin:$PATH
-                      go version
-                      go mod download
-                      go install github.com/jstemmer/go-junit-report/v2@latest
-                      go test -v ./... 2>&1 | tee report.out
-                      cat report.out | go-junit-report -set-exit-code > report.xml
-                    reports:
-                      type: JUnit
+              - parallel:
+                  - step:
+                      type: Run
+                      identifier: test
+                      name: Test
                       spec:
-                        paths:
-                          - /harness/services/luffy/report.xml
+                        connectorRef: dockerhub_main
+                        image: golang:1.23-alpine
+                        shell: Sh
+                        workingDirectory: /harness/services/luffy
+                        command: |-
+                          set -e
+                          cd  /harness/services/luffy
+                          export GOPATH=/root/go
+                          export PATH=$GOPATH/bin:$PATH
+                          go version
+                          go mod download
+                          go install github.com/jstemmer/go-junit-report/v2@latest
+                          go test -v ./... 2>&1 | tee report.out
+                          cat report.out | go-junit-report -set-exit-code > report.xml
+                        reports:
+                          type: JUnit
+                          spec:
+                            paths:
+                              - /harness/services/luffy/report.xml
+                  - step:
+                      type: Run
+                      name: Golang Lint
+                      identifier: Golang_Lint
+                      spec:
+                        connectorRef: dockerhub_main
+                        image: golangci/golangci-lint:v1.61-alpine
+                        shell: Sh
+                        command: |-
+                          set -e
+                          cd  /harness/services/luffy
+
+                          golangci-lint run \
+                              --timeout=5m \
+                              --out-format=checkstyle \
+                              --issues-exit-code=0 \
+                              ./... > lint-report.xml || true
+
+                          golangci-lint run \
+                              --timeout=5m \
+                              --out-format=colored-line-number \
+                              ./...
+                        reports:
+                          type: JUnit
+                          spec:
+                            paths:
+                              - /harness/services/luffy/lint-report.xml
+                    contextType: Pipeline
               - step:
                   type: BuildAndPushDockerRegistry
                   name: BuildAndPushDockerRegistry_1
