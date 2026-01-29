@@ -15,7 +15,7 @@ module "project-team-b" {
   gitops_config  = var.gitops_config
   github_repo = var.github_repo
 
-  tags = module.workspace-team-a.default_tags
+  tags = module.workspace-team-b.default_tags
 }
 
 module "workspace-team-b" {
