@@ -16,6 +16,12 @@ variable "account_id" {
   default     = "9leDao-yRqu7DN66CVDAeg"
 }
 
+variable "platform_api_key" {
+  description = "The platform API key"
+  type        = string
+  default     = "XPTO"
+}
+
 variable "projects" {
   description = "List of projects"
   default     = ["grand_line"]
