@@ -19,7 +19,7 @@ variable "account_id" {
 variable "platform_api_key" {
   description = "The platform API key"
   type        = string
-  default     = "XPTO"
+  default     = "pat.9leDao-yRqu7DN66CVDAeg.697b5daaf8ea75750e1aea3e.jG1qvnqldazw3a0CABfC"
 }
 
 variable "projects" {
