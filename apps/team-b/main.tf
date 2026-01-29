@@ -1,4 +1,4 @@
-module "project-team-a" {
+module "project-team-b" {
   source = "../../modules/organization"
 
   organization      = var.organization
@@ -18,7 +18,7 @@ module "project-team-a" {
   tags = module.workspace-team-a.default_tags
 }
 
-module "workspace-team-a" {
+module "workspace-team-b" {
   source = "../../modules/workspace"
   name   = terraform.workspace
 }
