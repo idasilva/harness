@@ -22,8 +22,3 @@ module "workspace-team-c" {
   source = "../../modules/workspace"
   name   = terraform.workspace
 }
-
-resource "aws_s3_bucket" "test_insecure" {
-  bucket = "test-trivy-validation-bucket"
-  acl    = "public-read"
-}
