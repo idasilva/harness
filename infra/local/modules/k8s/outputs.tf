@@ -29,3 +29,8 @@ output "kubeconfig_path" {
   description = "Path to kubeconfig"
   value       = "~/.kube/config"
 }
+
+output "namespaces" {
+  description = "Created namespaces"
+  value       = [for ns in kubernetes_namespace.default_namespaces : ns.metadata[0].name]
+}

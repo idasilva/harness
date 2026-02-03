@@ -13,8 +13,9 @@ module "project-team-b" {
 
   enable_gitops  = var.enable_gitops
   gitops_config  = var.gitops_config
+  github_repo = var.github_repo
 
-  tags = module.workspace-team-a.default_tags
+  tags = module.workspace-team-b.default_tags
 }
 
 module "workspace-team-b" {

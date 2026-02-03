@@ -1,0 +1,28 @@
+version: "1"
+instances:
+  - name: ubuntu-azure-pool
+    default: true
+    type: azure
+    pool: 1
+    limit: 1
+    platform:
+      os: linux
+      arch: amd64
+    spec:
+      account:
+        client_id:  ## Required for the runner to be able to create new VMs.
+        client_secret:  ## Required for the runner to be able to create new VMs.
+        subscription_id:  ## Required for the runner to be able to create new VMs.
+        tenant_id:  ## Required for the runner to be able to create new VMs.
+      location: brazilsouth  ## To minimize latency, use the same region as your Azure VM.
+      size: Standard_E2s_v3
+      tags:
+        tagName: tag
+      resource_group: harness-delegate-selfhosted_group
+      image: ## Azure VM image specs to use for build VMs.
+        username: azureuser
+        password: P@ssw0rd1234
+        publisher: canonical
+        offer: ubuntu-24_04-lts
+        sku: server
+        version: latest

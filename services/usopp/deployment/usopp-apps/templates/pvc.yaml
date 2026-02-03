@@ -1,0 +1,17 @@
+{{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "usopp-apps.fullname" . }}
+  labels:
+    {{- include "usopp-apps.labels" . | nindent 4 }}
+spec:
+  storageClassName: "{{ .Values.persistence.storageClass }}"
+  accessModes:
+  {{- range .Values.persistence.accessModes }}
+    - {{ . | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size | quote }}
+{{- end }}

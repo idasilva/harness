@@ -1,0 +1,188 @@
+pipeline:
+  identifier: default
+  name: default
+  orgIdentifier: default
+  projectIdentifier: default
+  properties:
+    ci:
+      codebase:
+        build: <+input>
+  stages:
+  - stage:
+      identifier: test
+      name: test
+      spec:
+        cloneCodebase: true
+        execution:
+          steps:
+          - step:
+              identifier: restorecache
+              name: restore_cache
+              spec:
+                image: plugins/cache
+                settings:
+                  access_key: <+ secrets.getValue("aws_access_key_id") >
+                  archive_format: tar
+                  backend: s3
+                  backend_operation_timeout: 1800s
+                  bucket: <+ secrets.getValue("aws_bucket") >
+                  cache_key: ""
+                  exit_code: "true"
+                  fail_restore_if_key_not_present: "false"
+                  region: <+ secrets.getValue("aws_region") >
+                  restore: "true"
+                  secret_key: <+ secrets.getValue("aws_secret_access_key") >
+              timeout: ""
+              type: Plugin
+          - step:
+              identifier: downloaddependencies
+              name: Download Dependencies
+              spec:
+                command: |-
+                  set -eo pipefail
+                  go mod download
+                image: cimg/go:1.21
+                shell: Bash
+              timeout: ""
+              type: Run
+          - step:
+              identifier: savecache
+              name: save_cache
+              spec:
+                image: plugins/cache
+                settings:
+                  access_key: <+ secrets.getValue("aws_access_key_id") >
+                  archive_format: tar
+                  backend: s3
+                  backend_operation_timeout: 1800s
+                  bucket: <+ secrets.getValue("aws_bucket") >
+                  cache_key: go-mod-v1-{{ checksum "go.sum" }}
+                  exit_code: "true"
+                  fail_restore_if_key_not_present: "false"
+                  mount:
+                  - /go/pkg/mod
+                  rebuild: "true"
+                  region: <+ secrets.getValue("aws_region") >
+                  secret_key: <+ secrets.getValue("aws_secret_access_key") >
+              timeout: ""
+              type: Plugin
+          - step:
+              identifier: runtests
+              name: Run Tests
+              spec:
+                command: |-
+                  set -eo pipefail
+                  go test -v -race -coverprofile=coverage.out ./...
+                image: cimg/go:1.21
+                shell: Bash
+              timeout: ""
+              type: Run
+          - step:
+              identifier: storetestresults
+              name: store_test_results
+              spec:
+                command: echo upload unit test results
+                reports:
+                  spec:
+                    paths:
+                    - /tmp/test-results
+                  type: JUnit
+              timeout: ""
+              type: Run
+        platform:
+          arch: Amd64
+          os: Linux
+        runtime:
+          spec: {}
+          type: Cloud
+      type: CI
+  - stage:
+      identifier: lint
+      name: lint
+      spec:
+        cloneCodebase: true
+        execution:
+          steps:
+          - step:
+              identifier: runlinter
+              name: Run Linter
+              spec:
+                command: |
+                  set -eo pipefail
+                  curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+                  golangci-lint run ./...
+                image: cimg/go:1.21
+                shell: Bash
+              timeout: ""
+              type: Run
+        platform:
+          arch: Amd64
+          os: Linux
+        runtime:
+          spec: {}
+          type: Cloud
+      type: CI
+  - stage:
+      identifier: build
+      name: build
+      spec:
+        cloneCodebase: true
+        execution:
+          steps:
+          - step:
+              identifier: buildapplication
+              name: Build Application
+              spec:
+                command: |-
+                  set -eo pipefail
+                  go build -o app ./cmd/main.go
+                image: cimg/go:1.21
+                shell: Bash
+              timeout: ""
+              type: Run
+        platform:
+          arch: Amd64
+          os: Linux
+        runtime:
+          spec: {}
+          type: Cloud
+      type: CI
+  - stage:
+      identifier: docker
+      name: docker
+      spec:
+        cloneCodebase: true
+        execution:
+          steps:
+          - step:
+              identifier: builddockerimage
+              name: Build Docker Image
+              spec:
+                command: |
+                  set -eo pipefail
+                  docker build -t myapp:${CIRCLE_SHA1} .
+                  docker tag myapp:${CIRCLE_SHA1} myapp:latest
+                image: cimg/base:stable
+                shell: Bash
+              timeout: ""
+              type: Run
+          - step:
+              identifier: pushtodockerhub
+              name: Push to Docker Hub
+              spec:
+                command: |
+                  set -eo pipefail
+                  echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                  docker push myapp:${CIRCLE_SHA1}
+                  docker push myapp:latest
+                image: cimg/base:stable
+                shell: Bash
+              timeout: ""
+              type: Run
+        platform:
+          arch: Amd64
+          os: Linux
+        runtime:
+          spec: {}
+          type: Cloud
+      type: CI

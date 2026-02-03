@@ -1,0 +1,41 @@
+pipeline:
+  name: gcp_hosted
+  identifier: gcp_hosted
+  projectIdentifier: grand_line
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: github_main
+        repoName: goHelloWorldServer
+        build: <+input>
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+          buildIntelligence:
+            enabled: true
+          infrastructure:
+            type: VM
+            spec:
+              type: Pool
+              spec:
+                poolName: ubuntu-gcp
+                os: Linux
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: helloWord
+                  identifier: helloWord
+                  spec:
+                    shell: Sh
+                    command: echo "hello"

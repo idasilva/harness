@@ -1,0 +1,128 @@
+{{- $fullName := include "usopp-apps.fullname" . -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ include "usopp-apps.fullname" . }}
+  labels:
+    {{- include "usopp-apps.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "usopp-apps.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "usopp-apps.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "usopp-apps.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.secretsInit.enabled }}
+      initContainers:
+        - name: secrets-init
+          image: {{ .Values.secretsInit.image.repository }}:{{ .Values.secretsInit.image.tag }}
+          imagePullPolicy: Always
+          env:
+            - name: AWS_REGION
+              value: {{ .Values.secretsInit.region }}
+          {{- with .Values.secretsInit.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- with $.Values.secretsInit.secrets }}
+            - --filter={{ join "|" $.Values.secretsInit.secrets }}
+            - --assume-role={{ $.Values.secretsInit.assumeRole }}
+          {{- end }}
+          {{- end }}
+          volumeMounts:
+          - mountPath: /secrets
+            name: secrets-init
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.args }}
+          command: ["/bin/sh", "-c"]
+          {{- with .Values.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.envVars }}
+          env:
+            {{- toYaml . | nindent 12  }}
+          {{- end }}
+      {{- if .Values.secretsInit.enabled }}
+          volumeMounts:
+          - mountPath: /secrets
+            name: secrets-init
+          {{- if .Values.persistence.enabled }}
+          {{- .Values.persistence.mounts | toYaml | nindent 10 }}
+          {{- end }}
+      volumes:
+      - name: secrets-init
+        emptyDir:
+          medium: Memory
+      {{- if .Values.persistence.enabled }}
+      - name: {{ $fullName }} 
+        persistentVolumeClaim:
+          claimName: {{ $fullName }}
+      {{- end }}
+      {{- end }}
+      {{- if and (not .Values.secretsInit.enabled) (.Values.persistence.enabled )  }}
+          volumeMounts:
+          {{- .Values.persistence.mounts | toYaml | nindent 10 }}
+      volumes:
+      - name: {{ $fullName }}
+        persistentVolumeClaim:
+          claimName: {{ $fullName }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  strategy:
+{{- if .Values.rolloutStrategy }}
+{{ toYaml .Values.rolloutStrategy | nindent 4 }}
+{{- else }}
+    canary:
+      steps:
+        - setWeight: 50
+        - pause: {}
+        - setWeight: 100
+{{- end }}
