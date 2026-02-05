@@ -12,7 +12,6 @@ func main() {
 
 	defer func() { _ = logger.Sync() }()
 	
-	// Low vulnerability: Using weak cryptographic hash MD5
 	hash := md5.Sum([]byte("luffy-service-id"))
 	serviceID := hex.EncodeToString(hash[:])
 	
